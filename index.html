@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Guidance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-icon ai">AI</div>
+            <h3 class="sidebar-title">CareerAI</h3>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-item active" onclick="navigateTo('dashboard')">
+                <div class="sidebar-icon">🏠</div>
+                <span class="sidebar-label">Dashboard</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('assessment')">
+                <div class="sidebar-icon">📊</div>
+                <span class="sidebar-label">Assessment</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('careers')">
+                <div class="sidebar-icon">🔍</div>
+                <span class="sidebar-label">Explore Careers</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('progress')">
+                <div class="sidebar-icon">📈</div>
+                <span class="sidebar-label">My Progress</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('skills')">
+                <div class="sidebar-icon">🎯</div>
+                <span class="sidebar-label">Skills</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('roadmap')">
+                <div class="sidebar-icon">🗺️</div>
+                <span class="sidebar-label">Roadmap</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('trends')">
+                <div class="sidebar-icon">📊</div>
+                <span class="sidebar-label">Industry Trends</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('resources')">
+                <div class="sidebar-icon">📚</div>
+                <span class="sidebar-label">Resources</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('community')">
+                <div class="sidebar-icon">👥</div>
+                <span class="sidebar-label">Community</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-item" onclick="navigateTo('settings')">
+                <div class="sidebar-icon">⚙️</div>
+                <span class="sidebar-label">Settings</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('help')">
+                <div class="sidebar-icon">❓</div>
+                <span class="sidebar-label">Help & Support</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="welcome-text">
+                    <h1>Welcome back, Alex! ✨</h1>
+                    <p>Ready to accelerate your career journey?</p>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn" onclick="showNotifications()">🔔</button>
+                    <button class="profile-button" onclick="openProfile()">Profile</button>
+                </div>
+            </div>
+
+            <!-- Hero Section -->
+            <div class="hero-section">
+                <h2>Start Your Journey</h2>
+                <p>Discover your ideal career path with AI-powered guidance and personalized insights.</p>
+                
+                <div class="stats">
+                    <div class="stat">
+                        <div class="stat-number">15K+</div>
+                        <div class="stat-label">Career Paths</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">95%</div>
+                        <div class="stat-label">Success Rate</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">24/7</div>
+                        <div class="stat-label">AI Support</div>
+                    </div>
+                </div>
+
+                <button class="start-button" onclick="startAssessment()">
+                    Start Assessment →
+                </button>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>Quick Actions</h3>
+                <div class="action-buttons">
+                    <button class="action-btn" onclick="quickMatch()">
+                        <span class="action-icon">⚡</span>
+                        Quick Career Match
+                    </button>
+                    <button class="action-btn" onclick="resumeAssessment()">
+                        <span class="action-icon">▶️</span>
+                        Resume Assessment
+                    </button>
+                    <button class="action-btn" onclick="viewRecommendations()">
+                        <span class="action-icon">💡</span>
+                        View Recommendations
+                    </button>
+                    <button class="action-btn" onclick="scheduleCall()">
+                        <span class="action-icon">📞</span>
+                        Schedule Consultation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div class="features-grid">
+                <div class="feature-card explore" onclick="exploreCareer()">
+                    <div class="feature-icon">🔍</div>
+                    <h3>Explore Careers</h3>
+                    <p>Browse thousands of industries and roles with AI-powered suggestions tailored to your interests and skills.</p>
+                    <div class="feature-badge">Popular</div>
+                </div>
+
+                <div class="feature-card progress" onclick="viewProgress()">
+                    <div class="feature-icon">📊</div>
+                    <h3>Your Progress</h3>
+                    <p>Track your journey with detailed analytics, view past assessments, and monitor your career development.</p>
+                    <div class="feature-progress">78% Complete</div>
+                </div>
+
+                <div class="feature-card skill" onclick="skillAdvisor()">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Skill Advisor</h3>
+                    <p>Get personalized recommendations on which skills matter most in your field and how to develop them.</p>
+                    <div class="feature-badge new">New</div>
+                </div>
+
+                <div class="feature-card trends" onclick="industryTrends()">
+                    <div class="feature-icon">📈</div>
+                    <h3>Industry Trends</h3>
+                    <p>Stay ahead with the latest career and industry trends, salary insights, and market predictions.</p>
+                </div>
+
+                <div class="feature-card roadmap" onclick="careerRoadmap()">
+                    <div class="feature-icon">🗺️</div>
+                    <h3>Career Roadmap</h3>
+                    <p>Get a personalized step-by-step plan to reach your dream career with milestones and actionable goals.</p>
+                </div>
+
+                <div class="feature-card ai-chat" onclick="openAIChat()">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Career Coach</h3>
+                    <p>Chat with our AI assistant for instant career advice, interview tips, and personalized guidance.</p>
+                    <div class="feature-badge">24/7</div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="recent-activity">
+                <h3>Recent Activity</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">✅</div>
+                        <div class="activity-content">
+                            <p><strong>Assessment Completed</strong></p>
+                            <span>Software Development Career Path - 2 hours ago</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">💡</div>
+                        <div class="activity-content">
+                            <p><strong>New Recommendation</strong></p>
+                            <span>React.js skill development suggested - Yesterday</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📈</div>
+                        <div class="activity-content">
+                            <p><strong>Progress Update</strong></p>
+                            <span>Career roadmap 78% complete - 3 days ago</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h4>AI Career Coach</h4>
+                <button onclick="toggleChat()">×</button>
+            </div>
+            <div class="chat-messages">
+                <div class="bot-message">Hi! I'm your AI career coach. How can I help you today?</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your question..." id="chatInput">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
