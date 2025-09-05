@@ -1,0 +1,71 @@
+# ===================================
+# Python-specific files and folders
+# ===================================
+
+# Byte-compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+# This is crucial. Never commit your virtual environment.
+venv/
+.venv/
+
+# Distribution and build files
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# Packaging and testing
+.pytest_cache/
+.tox/
+.coverage
+
+# ===================================
+# Flask/Web Application-specific
+# ===================================
+
+# Environment variables and secrets
+# CRUCIAL for your project!
+.env
+.flaskenv
+
+# Database files
+# Never commit your database to Git, as it contains user data.
+*.db
+*.sqlite
+*.sqlite3
+
+# Log files
+*.log
+
+# User-uploaded files
+# Uncomment these if your app handles user uploads
+# media/
+# uploads/
+
+# ===================================
+# Operating System & IDE
+# ===================================
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# VS Code
+.vscode/
+# Exclude a few files that are specific to your workspace
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# PyCharm/IntelliJ
+.idea/
+*.iml
