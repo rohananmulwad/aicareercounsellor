@@ -1,3 +1,3 @@
-from db import getConnection,releaseConnection
-from uitls.errorHandler import handleError
+from .connection import getConnection, releaseConnection
+from utils.errorHandler import handleError
 

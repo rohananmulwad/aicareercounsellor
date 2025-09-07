@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-dbPool=pool.SimpleConnectionPool(
+dbPool = pool.SimpleConnectionPool(
     minconn=1,
     maxconn=10,
     dsn=os.getenv("DB_URL")
@@ -13,10 +13,12 @@ dbPool=pool.SimpleConnectionPool(
 
 if not dbPool:
     # If pool creation failed, raise error to prevent app from starting
-    raise RuntimeError("Failed to initialize database connection pool. Exiting application.")
+    raise RuntimeError("Failed to initialize database connection pool. Exiting app.")
+
 
 def getConnection():
     return dbPool.getconn()
+
 
 def releaseConnection(conn):
     return dbPool.putconn(conn)
