@@ -54,7 +54,7 @@ class Googlellm:
         roadmap according to the context"""
         
         roadmapPrompt = ChatPromptTemplate.from_messages([
-            ("system", "You are a career guidance expert. Generate a detailed 5-year roadmap based on the following student profile."),
+        ("system", "You are a career guidance expert. Generate a detailed 5-year roadmap based on the following student profile give me that data in roadmap.sh format only point's and nothing more."),
             ("user", """
             Student Profile:
             Interests: {interests}
