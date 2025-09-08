@@ -1,7 +1,6 @@
 from functools import wraps
 from flask import request, flash, render_template
-from utils.tokenVerify import decodeToken
-
+from utils import decodeToken
 
 def login_required(f):
     @wraps(f)
