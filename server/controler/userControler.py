@@ -1,7 +1,8 @@
-from flask import Blueprint,request,render_template,redirect,url_for
-from utils import decodeToken,createToken, handleError
-from db import getUser, getUserEmail,insertUser,createTable
+from flask import Blueprint, request, render_template, redirect, url_for, flash, make_response
+from utils import decodeToken, createToken, handleError
+from db import getUser, getUserEmail, insertUser, createTable
 from app import bcrypt
+from middleware.authMiddleware import login_required
 
 userRouter = Blueprint("userRouter", __name__, url_prefix="/users")
 
@@ -18,3 +19,39 @@ def signup():
         return redirect(url_for("userRouter.login"))
     return render_template("singup.html")
 
+
+@userRouter.route("/login", methods=["GET", "POST"])
+@handleError("login faild")
+def login():
+    if request.method == "POST":
+        email = request.form.get("email")
+        password = request.form.get("password")
+
+        userData = getUserEmail(email)
+
+        if not userData:
+            flash("Invalid email", "error")
+            return redirect(url_for("userRouter.login"))
+
+        userId, userName, email, passwordHash = userData
+
+        if not bcrypt.check_password_hash(passwordHash, password):
+            flash("Invalid eamil or password", "error")
+            return redirect(url_for("userRouter.login"))
+
+        token = createToken(userId, email, userName)
+
+        resp = make_response(redirect(url_for("userRouter.dashboard")))
+        resp.set_cookie("auth_token",
+                        token,
+                        httponly=False,
+                        secure=False,
+                        samesite="Lax")
+        return render_template("login.html")
+
+
+@userRouter.route("/dashboard")
+@handleError("dashboard error")
+@login_required
+def dashboard(user):
+    return render_template("dashboard.html", user=user)
