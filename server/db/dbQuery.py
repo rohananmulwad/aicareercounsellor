@@ -1,7 +1,7 @@
 from utils import loadQueries, handleError
 from .connection import getConnection, releaseConnection
 
-Queries = loadQueries("./queries.sql")
+Queries = loadQueries("db/queries.sql")
 
 
 def runQuery(query_name, params=None, commit=False, fetchone=False, fetchall=False):
@@ -14,6 +14,7 @@ def runQuery(query_name, params=None, commit=False, fetchone=False, fetchall=Fal
         - fetchall: return all rows
     """
     sql = Queries.get(query_name)
+    print(f'user db creater query {sql}')
     
     if not sql:
         raise ValueError(f"Query {query_name} not found in queries.sql")

@@ -9,23 +9,23 @@ dbUrl = os.getenv("DB_URL")
 dbName = os.getenv("DB_NAME")
 
 
-def createDatabase():
-    #create's database table if not exists
-    conn = psycopg2.connect(dbUrl.replace(dbName, "postgres"))
-    conn.autocommit = True
+# def createDatabase():
+#     #create's database table if not exists
+#     conn = psycopg2.connect(dbUrl.replace(dbName, "postgres"))
+#     conn.autocommit = True
     
-    with conn.cursor() as curr:
-        curr.execute("SELECT 1 FROM pg_database WHERE datname=%s", (dbName,))
-        exists = curr.fetchone()
-        if not exists:
-            curr.execute(f"CREATE DATABASE {dbName};")
-            print(f"[INFO] database {dbName} created")
-        else:
-            print(f"[INFO] database {dbName} already exists")
-    conn.close()
+#     with conn.cursor() as curr:
+#         curr.execute("SELECT 1 FROM pg_database WHERE datname=%s", (dbName,))
+#         exists = curr.fetchone()
+#         if not exists:
+#             curr.execute(f"CREATE DATABASE {dbName};")
+#             print(f"[INFO] database {dbName} created")
+#         else:
+#             print(f"[INFO] database {dbName} already exists")
+#     conn.close()
 
 
-createDatabase()
+# createDatabase()
 
 dbPool = pool.SimpleConnectionPool(
     minconn=1,

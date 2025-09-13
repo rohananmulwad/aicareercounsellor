@@ -1,7 +1,6 @@
-from flask import Blueprint, request, render_template, redirect, url_for, flash, make_response
+from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app, make_response
 from utils import decodeToken, createToken, handleError
 from db import getUser, getUserEmail, insertUser, createTable
-from app import bcrypt
 from middleware.authMiddleware import login_required
 
 userRouter = Blueprint("userRouter", __name__, url_prefix="/users")
@@ -14,6 +13,7 @@ def signup():
         userName = request.form.get("userName")
         email = request.form.get("email")
         password = request.form.get("password")
+        bcrypt = current_app.extensions["bcrypt"]
         passwordHash = bcrypt.generate_password_hash(password).decode('utf-8')
         insertUser(userName, email, passwordHash)
         return redirect(url_for("userRouter.login"))
@@ -24,6 +24,7 @@ def signup():
 @handleError("login faild")
 def login():
     if request.method == "POST":
+        bcrypt = current_app.extensions["bcrypt"]
         email = request.form.get("email")
         password = request.form.get("password")
 
