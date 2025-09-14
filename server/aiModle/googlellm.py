@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
-
+form langchain.embeddings import GooglePalmEmbeddings
 load_dotenv()
 
 #This class is desing to handle all the fucntion realted 
@@ -21,6 +21,7 @@ class Googlellm:
             ("system", "You are a helpful assistant. Provide a concise answer."),
             ("user", "{data}")
         ])
+        self.embeddingModel=GooglePalmEmbeddings(self.apiKey)
 
     def askGemini(self,data:str)->str:
         """This function send data to googel 
@@ -63,7 +64,7 @@ class Googlellm:
             """)
         ])#it's jsut a genreal&reuseable way of defining prompt
         
-        roadmapChain=roadmapPrompt|self.llm|self.output_parsers
+        roadmapChain = roadmapPrompt | self.llm | self.output_parsers
         
         response = roadmapChain.invoke({
             "interests": userData.get("interests", "Not specified"),
@@ -73,6 +74,19 @@ class Googlellm:
 
         return response
         
+        
+    def askGeminiStream(self, data: str):
+        """streaming version of the code """
+        chain = self.generic_prompt_template | self.llm | self.output_parsers
+        for chunk in chain.stream({"data": data}):
+            yield chunk
+            
+            
+    def getEmbedding(self,text: str):
+        """convert strin into vector embedding for semantic search"""
+        vector=self.embeddingModel.embed_query(text)
+        return vector
+
 
 
 

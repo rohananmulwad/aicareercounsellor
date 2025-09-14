@@ -1,6 +1,6 @@
 from utils import loadQueries, handleError
 from .connection import getConnection, releaseConnection
-
+import uuid
 Queries = loadQueries("db/queries.sql")
 
 
@@ -60,4 +60,7 @@ def getUserEmail():
     return runQuery("select_user_by_email", fetchone=True)
 
 
-
+@handleError("Fail to fecth chat data",internal_error=1)
+  def getChatData(userId:str):
+        userUuid=str(uuid.UUID(userId))
+        return runQuery("select_chats", params=(userUuid,) ,fetchall=True)
