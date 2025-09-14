@@ -7,7 +7,7 @@ Queries = loadQueries("db/queries.sql")
 def runQuery(query_name, params=None, commit=False, fetchone=False, fetchall=False):
     """
         Generic query runner.
-        - query_name: key from QUERIES dict
+        - query_name: key from QUERIES dict/file
         - params: tuple of parameters for the query
         - commit: if True, commits the transaction
         - fetchone: return single row
@@ -61,6 +61,6 @@ def getUserEmail():
 
 
 @handleError("Fail to fecth chat data",internal_error=1)
-  def getChatData(userId:str):
-        userUuid=str(uuid.UUID(userId))
-        return runQuery("select_chats", params=(userUuid,) ,fetchall=True)
+def getChatData(userId:str):
+    userUuid=str(uuid.UUID(userId))
+    return runQuery("select_chats", params=(userUuid,) ,fetchall=True)

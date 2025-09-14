@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app, make_response
 from utils import decodeToken, createToken, handleError
-from db import getUser, getUserEmail, insertUser, createTable
+from db import getUser, getUserEmail, insertUser
 from middleware.authMiddleware import login_required
 
 userRouter = Blueprint("userRouter", __name__, url_prefix="/users")
