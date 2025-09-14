@@ -48,7 +48,8 @@ def login():
                         httponly=False,
                         secure=False,
                         samesite="Lax")
-        return render_template("login.html")
+        return resp
+    return render_template("login.html")
 
 
 @userRouter.route("/dashboard")

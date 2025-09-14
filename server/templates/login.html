@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <style>
+        body {
+            display: flex;
+            font-family: Arial;
+        }
+        .form-container {
+            flex: 2;
+            padding: 20px;
+        }
+        .sidebar {
+            flex: 1;
+            padding: 20px;
+            border-left: 1px solid #ccc;
+            background-color: #f8f8f8;
+        }
+        .sidebar h3 {
+            margin-top: 0;
+        }
+        .data-item {
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>Login Page</h1>
+        <form method="POST">
+            <input type="text" name="email" placeholder="Email" required><br><br>
+            <input type="password" name="password" placeholder="Password" required><br><br>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <div class="sidebar">
+        <h3>Submitted Data</h3>
+        {% if submitted %}
+            {% for item in submitted %}
+                <div class="data-item">
+                    <strong>Email:</strong> {{ item.email }}<br>
+                    <strong>Password:</strong> {{ item.password }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No data submitted yet.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

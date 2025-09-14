@@ -56,11 +56,11 @@ def getAllUsers():
 
 
 @handleError("Fail to fecth user by email", internal_error=1)
-def getUserEmail():
-    return runQuery("select_user_by_email", fetchone=True)
+def getUserEmail(email : str):
+    return runQuery("select_user_by_email", params=(email,) ,fetchone=True)
 
 
 @handleError("Fail to fecth chat data",internal_error=1)
-def getChatData(userId:str):
+def getChatData(userId : str):
     userUuid=str(uuid.UUID(userId))
-    return runQuery("select_chats", params=(userUuid,) ,fetchall=True)
+    return runQuery("select_chats", params=(userUuid,),fetchall=True)

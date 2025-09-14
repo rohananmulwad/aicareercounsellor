@@ -7,10 +7,11 @@ CREATE EXTENSION IF NOT EXISTS vector;
 -- create_user_table
 CREATE TABLE IF NOT EXISTS users(
     userId UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    userName VARCHAR(50) UNIQUE NOT NULL,
-    email VARCHAR(100) UNIQUE NOT NULL,
+    userName VARCHAR(50)  NOT NULL,
+    email VARCHAR(100) NOT NULL,
     passwordHash TEXT NOT NULL,
-    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
+    createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT unique_user_email UNIQUE (userName, email) 
 );
 
 -- create_chat_table
