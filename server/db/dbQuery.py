@@ -13,9 +13,7 @@ def runQuery(query_name, params=None, commit=False, fetchone=False, fetchall=Fal
         - fetchone: return single row
         - fetchall: return all rows
     """
-    sql = Queries.get(query_name)
-    print(f'user db creater query {sql}')
-    
+    sql = Queries.get(query_name)    
     if not sql:
         raise ValueError(f"Query {query_name} not found in queries.sql")
     
@@ -35,8 +33,8 @@ def runQuery(query_name, params=None, commit=False, fetchone=False, fetchall=Fal
 
 
 @handleError("Fail to create table", internal_error=1)
-def createTable(query_name):
-    """create user table"""
+def gernalQuery(query_name):
+    """create user table, it's a gernalQuery Runer"""
     return runQuery(query_name, commit=True)
 
 
