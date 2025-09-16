@@ -3,6 +3,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- vector_extension
 CREATE EXTENSION IF NOT EXISTS vector;
 
+-- create_type_role
+DROP TYPE IF EXISTS chat_roles;
+CREATE TYPE chat_roles AS ENUM('user','assistant')
 
 -- create_user_table
 CREATE TABLE IF NOT EXISTS users(
@@ -17,10 +20,10 @@ CREATE TABLE IF NOT EXISTS users(
 -- create_chat_table
 CREATE TABLE IF NOT EXISTS chats(
     chatId UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    userId INT NOT NULL,
+    userId UUID NOT NULL,
     messageData TEXT NOT NULL,
     messageVector vector(1536),
-    chatRole ENUM('user','assistant') NOT NULL, 
+    chatRole chat_roles NOT NULL, 
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userId) REFERENCES users(userId) on DELETE CASCADE 
 );
@@ -35,6 +38,10 @@ VALUES(%s,%s,%s)
 ON CONFLICT (userName, email) DO NOTHING
 RETURNING userId;
 
+-- insert_chat
+INSERT INTO chats(userId,messageData,messageVector,chatRole)
+VALUES %s
+
 -- get_all_user
 SELECT * FROM users ORDER BY createdAt DESC;
 
@@ -48,3 +55,9 @@ FROM chats
 WHERE userId = %s
 ORDER BY messageVector <-> %s
 LIMIT 10;
+
+-- select_Assement
+SELECT assId,assData,createdAt
+FROM assigment
+WHERE userId=%s 
+

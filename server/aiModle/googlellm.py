@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
-form langchain.embeddings import GooglePalmEmbeddings
+from langchain_community.embeddings import GooglePalmEmbeddings
 load_dotenv()
 
 #This class is desing to handle all the fucntion realted 
@@ -21,8 +21,9 @@ class Googlellm:
             ("system", "You are a helpful assistant. Provide a concise answer."),
             ("user", "{data}")
         ])
-        self.embeddingModel=GooglePalmEmbeddings(self.apiKey)
-
+        
+        self.embeddingModel = GooglePalmEmbeddings(google_api_key=self.apiKey)
+    
     def askGemini(self,data:str)->str:
         """This function send data to googel 
         gemini and wait for output to be back 

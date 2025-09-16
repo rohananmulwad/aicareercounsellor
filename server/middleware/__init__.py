@@ -1,1 +1,1 @@
-from .authMiddleware import login_required
+from .authMiddleware import loginRequired

@@ -16,8 +16,14 @@ def create_app():
     app.extensions["bcrypt"] = bcrypt 
     #this function createTable will a genreal Query
     #and return nothing just run query
+    #below is extension activation
     gernalQuery("uuid_extension")
+    gernalQuery("vector_extension")
+    #creating Types
+    gernalQuery("create_type_role")
+    #below is table creation
     gernalQuery("create_user_table")
+    gernalQuery("create_chat_table")
 
     for bp in allControllers:
         app.register_blueprint(bp)

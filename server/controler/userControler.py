@@ -1,7 +1,7 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash, current_app, make_response
 from utils import decodeToken, createToken, handleError
 from db import getUser, getUserEmail, insertUser
-from middleware.authMiddleware import login_required
+from middleware.authMiddleware import loginRequired
 
 userRouter = Blueprint("userRouter", __name__, url_prefix="/users")
 
@@ -27,10 +27,11 @@ def login():
         bcrypt = current_app.extensions["bcrypt"]
         email = request.form.get("email")
         password = request.form.get("password")
-
+        
         userData = getUserEmail(email)
-
-        if not userData:
+        print(userData)
+        
+        if not userData or userData is None:
             flash("Invalid email", "error")
             return redirect(url_for("userRouter.login"))
 
@@ -41,19 +42,19 @@ def login():
             return redirect(url_for("userRouter.login"))
 
         token = createToken(userId, email, userName)
-
-        resp = make_response(redirect(url_for("userRouter.dashboard")))
+        resp = make_response(redirect("/users/dashboard"))
         resp.set_cookie("auth_token",
                         token,
                         httponly=False,
                         secure=False,
                         samesite="Lax")
+        print(resp)
         return resp
     return render_template("login.html")
 
-
-@userRouter.route("/dashboard")
+@userRouter.route("/dashboard", methods=["GET", "POST"])
 @handleError("dashboard error")
-@login_required
+@loginRequired
 def dashboard(user):
+    print(user)
     return render_template("dashboard.html", user=user)

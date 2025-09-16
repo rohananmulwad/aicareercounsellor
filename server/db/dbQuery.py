@@ -1,10 +1,11 @@
 from utils import loadQueries, handleError
+from psycopg2.extras import execute_values
 from .connection import getConnection, releaseConnection
-import uuid
+
 Queries = loadQueries("db/queries.sql")
 
-
-def runQuery(query_name, params=None, commit=False, fetchone=False, fetchall=False):
+def runQuery(query_name, params=None, commit=False, fetchone=False, 
+             fetchall=False, batch=False):
     """
         Generic query runner.
         - query_name: key from QUERIES dict/file
@@ -28,6 +29,8 @@ def runQuery(query_name, params=None, commit=False, fetchone=False, fetchall=Fal
                 return curr.fetchone()
             if fetchall:
                 return curr.fetchall()
+            if batch:
+                execute_values(conn, sql, params)
     finally:
         releaseConnection(conn)
 
@@ -56,11 +59,16 @@ def getAllUsers():
 
 
 @handleError("Fail to fecth user by email", internal_error=1)
-def getUserEmail(email : str):
-    return runQuery("select_user_by_email", params=(email,) ,fetchone=True)
+def getUserEmail(email: str):
+    return runQuery("select_user_by_email", params=(email,), fetchone=True)
 
 
-@handleError("Fail to fecth chat data",internal_error=1)
-def getChatData(userId : str):
-    userUuid=str(uuid.UUID(userId))
-    return runQuery("select_chats", params=(userUuid,),fetchall=True)
+@handleError("Fail to fecth chat data", internal_error=1)
+def getChatData(userId: str):
+    return runQuery("select_chats", params=(userId,), fetchall=True)
+
+
+@handleError("Fail to insert chat data", internal_error=1)
+def insertChatData(data: list):
+    return runQuery("insert_chat", params=data, batch=True, commit=True)
+    

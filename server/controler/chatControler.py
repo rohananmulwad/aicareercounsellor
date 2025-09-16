@@ -1,39 +1,59 @@
-from flask import Blueprint,request,render_template,Response
+from flask import Blueprint, request, render_template, Response
 from utils import handleError
-from db import getChatData
-from middleware.authMiddleware import login_required
+from db import getChatData, insertChatData
+from middleware.authMiddleware import loginRequired
 from aiModle import Googlellm
 
 aiRouter = Blueprint("aiRouter", __name__, url_prefix="/aiModel")
 
-llmService = Googlellm()#ai model class 
+llmService = Googlellm()  # ai model class
 
-@aiRouter.route("/chat/stream", methodes=["POST"])
+
+@aiRouter.route("/chat", methods=["GET","POST"])
 @handleError("error during chat")
-@login_required
-def chat_stream():# this function send's data in chuck to the user
-    #user input data
-    data = request.get_json()
-    message = data.get("message", "").strip()
-    if not message:
-        raise ValueError("No message provided")
-    #finding chat data in database for context
-    #fectch usedId
-    userId = user["userId"]
-    
-    #chat history fetch     
-    messageVector = llmService.getEmbedding(message)
-    chatHistory = getChatData(userId)
-    
-    contextText=""
-    for chat in chatHistory:
-        contextText += f"{chat['chatRole']}: {chat['messageData']}\n"
-    contextText += f"user: {message}"  # current user message
-    
-    def generate():
-        for chunk in llmService.askGeminiStream(message):
-            yield chunk
-            
-    return Response(generate(), mimetype="text/plain")
+@loginRequired
+def chatStream():
+    # this function need's optimization
+    # such as integrate redis, so db call's are less
+    # this function send's data in chuck to the user
+    # user input data
+    if request.method == "GET":
+        return render_template("chat.html")
+    elif request.method == "POST":
+        data = request.get_json()
+        message = data.get("message", "").strip()
+        if not message:
+            raise ValueError("No message provided")
 
+        # finding chat data in database for context
+        # fectch usedId
 
+        userId = user["userId"]
+
+        # chat history fetch
+        messageVector = llmService.getEmbedding(message)
+        chatHistory = getChatData(userId)
+
+        contextText = ""
+        for chat in chatHistory:
+            contextText += f"{chat['chatRole']}: {chat['messageData']}\n"
+        contextText += f"user: {message}"  # current user message
+
+        def generate():
+            """this function is need to be more optimize
+            as it just add's strem data into local buffer
+            integrate redis here and save data their 
+            after few time's save all data in db in batch"""
+
+            chunks = []
+            for chunk in llmService.askGeminiStream(message):
+                chunks.append(chunk)
+                yield chunk
+
+            responseText = "".join(chunks)
+            rows = [(userId, message, messageVector, "user"),
+                    (userId, responseText, llmService.getEmbedding(responseText),
+                    "assistant")]
+            insertChatData(rows)
+
+        return Response(generate(), mimetype="text/plain")

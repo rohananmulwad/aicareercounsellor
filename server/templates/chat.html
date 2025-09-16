@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+</head>
+<body>
+    <form id="chatForm">
+        <input type="text" id="message" placeholder="Type your message">
+        <button type="submit">Send</button>
+    </form>
+
+    <div id="chatBox"></div>
+
+    <script>
+        document.getElementById("chatForm").onsubmit = async function(e) {
+            e.preventDefault();
+            const msg = document.getElementById("message").value;
+
+            const evtSource = new EventSource("/chat/stream?message=" + encodeURIComponent(msg));
+            
+            let chatBox = document.getElementById("chatBox");
+            chatBox.innerHTML += "<p><b>User:</b> " + msg + "</p>";
+
+            evtSource.onmessage = function(event) {
+                chatBox.innerHTML += "<p><b>AI:</b> " + event.data + "</p>";
+            };
+
+            evtSource.onerror = function() {
+                evtSource.close();
+            };
+        };
+    </script>
+</body>
+</html>

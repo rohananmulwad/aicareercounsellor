@@ -1,1 +1,1 @@
-from .dbQuery import getConnection, getAllUsers, getUser, getUserEmail, insertUser,gernalQuery,getChatData
+from .dbQuery import getConnection, getAllUsers, getUser, getUserEmail, insertUser, gernalQuery, getChatData, insertChatData
