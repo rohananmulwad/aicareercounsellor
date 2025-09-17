@@ -22,15 +22,18 @@ def runQuery(query_name, params=None, commit=False, fetchone=False,
     
     try:
         with conn.cursor() as curr:
-            curr.execute(sql, params)
+            if batch:
+                execute_values(curr, sql, params)
+            else:
+                curr.execute(sql, params)
+            
             if commit:
                 conn.commit()
             if fetchone:
                 return curr.fetchone()
             if fetchall:
                 return curr.fetchall()
-            if batch:
-                execute_values(conn, sql, params)
+            
     finally:
         releaseConnection(conn)
 

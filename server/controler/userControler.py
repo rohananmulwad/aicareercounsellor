@@ -29,13 +29,12 @@ def login():
         password = request.form.get("password")
         
         userData = getUserEmail(email)
-        print(userData)
         
         if not userData or userData is None:
             flash("Invalid email", "error")
             return redirect(url_for("userRouter.login"))
 
-        userId, userName, email, passwordHash = userData
+        userId, userName, email, passwordHash, _ = userData
 
         if not bcrypt.check_password_hash(passwordHash, password):
             flash("Invalid eamil or password", "error")
@@ -48,7 +47,6 @@ def login():
                         httponly=False,
                         secure=False,
                         samesite="Lax")
-        print(resp)
         return resp
     return render_template("login.html")
 
@@ -56,5 +54,4 @@ def login():
 @handleError("dashboard error")
 @loginRequired
 def dashboard(user):
-    print(user)
     return render_template("dashboard.html", user=user)

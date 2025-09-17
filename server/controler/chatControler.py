@@ -9,10 +9,10 @@ aiRouter = Blueprint("aiRouter", __name__, url_prefix="/aiModel")
 llmService = Googlellm()  # ai model class
 
 
-@aiRouter.route("/chat", methods=["GET","POST"])
+@aiRouter.route("/chat", methods=["GET", "POST"])
 @handleError("error during chat")
 @loginRequired
-def chatStream():
+def chatStream(user):
     # this function need's optimization
     # such as integrate redis, so db call's are less
     # this function send's data in chuck to the user
@@ -21,6 +21,7 @@ def chatStream():
         return render_template("chat.html")
     elif request.method == "POST":
         data = request.get_json()
+        print(data)
         message = data.get("message", "").strip()
         if not message:
             raise ValueError("No message provided")
@@ -33,10 +34,13 @@ def chatStream():
         # chat history fetch
         messageVector = llmService.getEmbedding(message)
         chatHistory = getChatData(userId)
-
+        if chatHistory is None:
+            chatHistory = []
         contextText = ""
+        
         for chat in chatHistory:
             contextText += f"{chat['chatRole']}: {chat['messageData']}\n"
+        
         contextText += f"user: {message}"  # current user message
 
         def generate():

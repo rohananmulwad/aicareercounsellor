@@ -17,12 +17,15 @@ CREATE TABLE IF NOT EXISTS users(
     CONSTRAINT unique_user_email UNIQUE (userName, email) 
 );
 
+-- alter_chat_table_vecotr
+ALTER TABLE chats ALTER COLUMN messageVector TYPE VECTOR(768);
+
 -- create_chat_table
 CREATE TABLE IF NOT EXISTS chats(
     chatId UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     userId UUID NOT NULL,
     messageData TEXT NOT NULL,
-    messageVector vector(1536),
+    messageVector vector(786),
     chatRole chat_roles NOT NULL, 
     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (userId) REFERENCES users(userId) on DELETE CASCADE 
@@ -39,8 +42,7 @@ ON CONFLICT (userName, email) DO NOTHING
 RETURNING userId;
 
 -- insert_chat
-INSERT INTO chats(userId,messageData,messageVector,chatRole)
-VALUES %s
+INSERT INTO chats(userId,messageData,messageVector,chatRole) VALUES %s
 
 -- get_all_user
 SELECT * FROM users ORDER BY createdAt DESC;
@@ -50,6 +52,13 @@ SELECT userId,userName,email,passwordHash,createdAt FROM users
 WHERE email=%s
 
 -- select_chats
+SELECT chatId, messageData, chatRole, createdAt
+FROM chats
+WHERE userId = %s
+ORDER BY createdAt DESC
+LIMIT 10
+
+-- select_chat_vector
 SELECT chatId, messageData, chatRole, createdAt
 FROM chats
 WHERE userId = %s

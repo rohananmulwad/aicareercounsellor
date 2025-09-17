@@ -3,28 +3,28 @@ from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
-from langchain_community.embeddings import GooglePalmEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings
 load_dotenv()
 
 #This class is desing to handle all the fucntion realted 
 #google gemini,such as sending data to llm of google 
 class Googlellm:
-    def __init__(self,modelName:str="gemini-2.5-flash"):
+    def __init__(self, modelName: str = "gemini-2.5-flash"):
         self.apiKey=os.getenv("GOOGLE_API_KEY")
         
         if not self.apiKey:
             raise ValueError("GOOGLE_API_KEY environment variable is not set. Please set it.")
 
-        self.llm=ChatGoogleGenerativeAI(model=modelName)
-        self.output_parsers=StrOutputParser()
+        self.llm = ChatGoogleGenerativeAI(model=modelName)
+        self.output_parsers = StrOutputParser()
         self.generic_prompt_template = ChatPromptTemplate.from_messages([
             ("system", "You are a helpful assistant. Provide a concise answer."),
             ("user", "{data}")
         ])
         
-        self.embeddingModel = GooglePalmEmbeddings(google_api_key=self.apiKey)
+        self.embeddingModel = GoogleGenerativeAIEmbeddings(model="models/text-embedding-004", google_api_key=self.apiKey)
     
-    def askGemini(self,data:str)->str:
+    def askGemini(self, data: str)->str:
         """This function send data to googel 
         gemini and wait for output to be back 
         and send it to the back to the client"""
@@ -83,10 +83,14 @@ class Googlellm:
             yield chunk
             
             
-    def getEmbedding(self,text: str):
+    def getEmbedding(self, text: str):
         """convert strin into vector embedding for semantic search"""
-        vector=self.embeddingModel.embed_query(text)
-        return vector
+        try:
+            result = self.embeddingModel.embed_query(text)
+            return result
+        except Exception as e:
+            print(f"Embedding error :{e}")
+            return None
 
 
 
