@@ -21,7 +21,6 @@ def chatStream(user):
         return render_template("chat.html")
     elif request.method == "POST":
         data = request.get_json()
-        print(data)
         message = data.get("message", "").strip()
         if not message:
             raise ValueError("No message provided")
@@ -38,8 +37,9 @@ def chatStream(user):
             chatHistory = []
         contextText = ""
         
+        
         for chat in chatHistory:
-            contextText += f"{chat['chatRole']}: {chat['messageData']}\n"
+             contextText += f"{chat[2]}: {chat[0]}\n"
         
         contextText += f"user: {message}"  # current user message
 
