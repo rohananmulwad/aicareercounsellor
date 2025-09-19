@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explore Courses & Colleges - AI Career Guidance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar (Same as index.html) -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-icon ai">AI</div>
+            <h3 class="sidebar-title">CareerAI</h3>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-item" onclick="navigateTo('dashboard')">
+                <div class="sidebar-icon">🏠</div>
+                <span class="sidebar-label">Dashboard</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('assessment')">
+                <div class="sidebar-icon">📊</div>
+                <span class="sidebar-label">Quiz</span>
+            </div>
+            <div class="sidebar-item active" onclick="navigateTo('careers')">
+                <div class="sidebar-icon">🔍</div>
+                <span class="sidebar-label">Explore Courses...</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('skills')">
+                <div class="sidebar-icon">🎯</div>
+                <span class="sidebar-label">Skill Advisor</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('roadmap')">
+                <div class="sidebar-icon">🗺️</div>
+                <span class="sidebar-label">Career Roadmap</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-item" onclick="navigateTo('settings')">
+                <div class="sidebar-icon">⚙️</div>
+                <span class="sidebar-label">Settings</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('help')">
+                <div class="sidebar-icon">❓</div>
+                <span class="sidebar-label">Help & Support</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="welcome-text">
+                    <h1>Explore Courses & Colleges 🎓</h1>
+                    <p>Find the perfect educational path for your career goals</p>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn" onclick="showNotifications()">🔔</button>
+                    <button class="profile-button" onclick="openProfile()">Profile</button>
+                </div>
+            </div>
+
+            <!-- Search Section -->
+            <div class="hero-section">
+                <div class="search-section">
+                    <input type="text" placeholder="Search for courses, colleges, or locations..." class="search-input">
+                    <button class="start-button">Search →</button>
+                </div>
+            </div>
+
+            <!-- Quick Filters -->
+            <div class="quick-actions">
+                <h3>Quick Filters</h3>
+                <div class="action-buttons">
+                    <select class="action-btn">
+                        <option value="">Course Level</option>
+                        <option value="undergraduate">Undergraduate</option>
+                        <option value="postgraduate">Postgraduate</option>
+                        <option value="diploma">Diploma</option>
+                    </select>
+                    <select class="action-btn">
+                        <option value="">Location</option>
+                        <option value="mumbai">Mumbai</option>
+                        <option value="delhi">Delhi</option>
+                        <option value="bangalore">Bangalore</option>
+                    </select>
+                    <select class="action-btn">
+                        <option value="">Stream</option>
+                        <option value="engineering">Engineering</option>
+                        <option value="medical">Medical</option>
+                        <option value="management">Management</option>
+                    </select>
+                    <button class="action-btn">
+                        <span class="action-icon">🔄</span>
+                        Reset Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Course Cards -->
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>B.Tech Computer Science</h3>
+                    <p class="college">IIT Mumbai</p>
+                    <p>4-year undergraduate program focused on computer science and engineering.</p>
+                    <div class="course-details">
+                        <span>⏱️ 4 Years</span>
+                        <span>💰 ₹2L/year</span>
+                    </div>
+                    <button class="start-button">View Details</button>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>MBA Finance</h3>
+                    <p class="college">IIM Ahmedabad</p>
+                    <p>2-year postgraduate program specializing in financial management.</p>
+                    <div class="course-details">
+                        <span>⏱️ 2 Years</span>
+                        <span>💰 ₹23L/year</span>
+                    </div>
+                    <button class="start-button">View Details</button>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>BCA</h3>
+                    <p class="college">Delhi University</p>
+                    <p>3-year undergraduate program in computer applications.</p>
+                    <div class="course-details">
+                        <span>⏱️ 3 Years</span>
+                        <span>💰 ₹1.5L/year</span>
+                    </div>
+                    <button class="start-button">View Details</button>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎓</div>
+                    <h3>BSc Data Science</h3>
+                    <p class="college">BITS Pilani</p>
+                    <p>3-year program focusing on data analytics and machine learning.</p>
+                    <div class="course-details">
+                        <span>⏱️ 3 Years</span>
+                        <span>💰 ₹2.8L/year</span>
+                    </div>
+                    <button class="start-button">View Details</button>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="recent-activity">
+                <div class="pagination">
+                    <button class="action-btn active">1</button>
+                    <button class="action-btn">2</button>
+                    <button class="action-btn">3</button>
+                    <button class="action-btn">Next →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h4>AI Career Coach</h4>
+                <button onclick="toggleChat()">×</button>
+            </div>
+            <div class="chat-messages">
+                <div class="bot-message">Need help finding the right course? Ask me anything!</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your question..." id="chatInput">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

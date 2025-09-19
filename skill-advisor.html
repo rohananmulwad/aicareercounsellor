@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Advisor - AI Career Guidance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-icon ai">AI</div>
+            <h3 class="sidebar-title">CareerAI</h3>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-item" onclick="navigateTo('dashboard')">
+                <div class="sidebar-icon">🏠</div>
+                <span class="sidebar-label">Dashboard</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('assessment')">
+                <div class="sidebar-icon">📊</div>
+                <span class="sidebar-label">Quiz</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('careers')">
+                <div class="sidebar-icon">🔍</div>
+                <span class="sidebar-label">Explore Courses...</span>
+            </div>
+            <div class="sidebar-item active" onclick="navigateTo('skills')">
+                <div class="sidebar-icon">🎯</div>
+                <span class="sidebar-label">Skill Advisor</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('roadmap')">
+                <div class="sidebar-icon">🗺️</div>
+                <span class="sidebar-label">Career Roadmap</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-item" onclick="navigateTo('settings')">
+                <div class="sidebar-icon">⚙️</div>
+                <span class="sidebar-label">Settings</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('help')">
+                <div class="sidebar-icon">❓</div>
+                <span class="sidebar-label">Help & Support</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="welcome-text">
+                    <h1>Skill Advisor 🎯</h1>
+                    <p>Discover and develop the skills that matter most for your career</p>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn" onclick="showNotifications()">🔔</button>
+                    <button class="profile-button" onclick="openProfile()">Profile</button>
+                </div>
+            </div>
+
+            <!-- Skill Overview Section -->
+            <div class="hero-section">
+                <h2>Your Skill Progress</h2>
+                <div class="skill-overview">
+                    <div class="skill-stat">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Skills in Progress</span>
+                    </div>
+                    <div class="skill-stat">
+                        <span class="stat-number">5</span>
+                        <span class="stat-label">Completed Skills</span>
+                    </div>
+                    <div class="skill-stat">
+                        <span class="stat-number">8</span>
+                        <span class="stat-label">Recommended Skills</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <h3>Skill Categories</h3>
+                <div class="action-buttons">
+                    <button class="action-btn active">
+                        <span class="action-icon">💻</span>
+                        Technical Skills
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon">🤝</span>
+                        Soft Skills
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon">📊</span>
+                        Domain Skills
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon">🌟</span>
+                        Leadership Skills
+                    </button>
+                </div>
+            </div>
+
+            <!-- Skills Grid -->
+            <div class="features-grid">
+                <div class="feature-card skill-card">
+                    <div class="feature-icon">💻</div>
+                    <h3>Web Development</h3>
+                    <div class="skill-progress">
+                        <div class="progress-bar" style="width: 75%"></div>
+                        <span>75% Complete</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">HTML</span>
+                        <span class="skill-tag">CSS</span>
+                        <span class="skill-tag">JavaScript</span>
+                    </div>
+                    <button class="start-button">Continue Learning</button>
+                </div>
+
+                <div class="feature-card skill-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile Development</h3>
+                    <div class="skill-progress">
+                        <div class="progress-bar" style="width: 45%"></div>
+                        <span>45% Complete</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">React Native</span>
+                        <span class="skill-tag">Flutter</span>
+                    </div>
+                    <button class="start-button">Continue Learning</button>
+                </div>
+
+                <div class="feature-card skill-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI & Machine Learning</h3>
+                    <div class="skill-progress">
+                        <div class="progress-bar" style="width: 30%"></div>
+                        <span>30% Complete</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">TensorFlow</span>
+                    </div>
+                    <button class="start-button">Continue Learning</button>
+                </div>
+
+                <div class="feature-card skill-card new">
+                    <div class="feature-icon">☁️</div>
+                    <h3>Cloud Computing</h3>
+                    <div class="skill-progress">
+                        <div class="progress-bar" style="width: 0%"></div>
+                        <span>Recommended</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Azure</span>
+                    </div>
+                    <button class="start-button">Start Learning</button>
+                </div>
+            </div>
+
+            <!-- Learning Resources -->
+            <div class="recent-activity">
+                <h3>Recommended Learning Resources</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">📚</div>
+                        <div class="activity-content">
+                            <p><strong>Advanced JavaScript Course</strong></p>
+                            <span>Udemy - 20 hours of content</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🎥</div>
+                        <div class="activity-content">
+                            <p><strong>React Native Tutorial Series</strong></p>
+                            <span>YouTube - 15 videos</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-content">
+                            <p><strong>Machine Learning Certification</strong></p>
+                            <span>Coursera - 3 months course</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h4>AI Career Coach</h4>
+                <button onclick="toggleChat()">×</button>
+            </div>
+            <div class="chat-messages">
+                <div class="bot-message">Need help choosing skills to learn? Ask me anything!</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your question..." id="chatInput">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Roadmap - AI Career Guidance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="bg-decoration"></div>
+    <div class="bg-decoration"></div>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleSidebar()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-icon ai">AI</div>
+            <h3 class="sidebar-title">CareerAI</h3>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="sidebar-item" onclick="navigateTo('dashboard')">
+                <div class="sidebar-icon">🏠</div>
+                <span class="sidebar-label">Dashboard</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('assessment')">
+                <div class="sidebar-icon">📊</div>
+                <span class="sidebar-label">Quiz</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('careers')">
+                <div class="sidebar-icon">🔍</div>
+                <span class="sidebar-label">Explore Courses...</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('skills')">
+                <div class="sidebar-icon">🎯</div>
+                <span class="sidebar-label">Skill Advisor</span>
+            </div>
+            <div class="sidebar-item active" onclick="navigateTo('roadmap')">
+                <div class="sidebar-icon">🗺️</div>
+                <span class="sidebar-label">Career Roadmap</span>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="sidebar-item" onclick="navigateTo('settings')">
+                <div class="sidebar-icon">⚙️</div>
+                <span class="sidebar-label">Settings</span>
+            </div>
+            <div class="sidebar-item" onclick="navigateTo('help')">
+                <div class="sidebar-icon">❓</div>
+                <span class="sidebar-label">Help & Support</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+        <div class="container">
+            <!-- Header -->
+            <div class="header">
+                <div class="welcome-text">
+                    <h1>Your Career Roadmap 🗺️</h1>
+                    <p>Your personalized path to success in Software Development</p>
+                </div>
+                <div class="header-actions">
+                    <button class="notification-btn" onclick="showNotifications()">🔔</button>
+                    <button class="profile-button" onclick="openProfile()">Profile</button>
+                </div>
+            </div>
+
+            <!-- Progress Overview -->
+            <div class="hero-section">
+                <h2>Overall Progress</h2>
+                <div class="roadmap-progress">
+                    <div class="progress-bar" style="width: 65%"></div>
+                    <span>65% Complete</span>
+                </div>
+                <div class="roadmap-stats">
+                    <div class="stat">
+                        <span class="stat-number">8/12</span>
+                        <span class="stat-label">Milestones Completed</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Current Tasks</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">24</span>
+                        <span class="stat-label">Skills Identified</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Roadmap Timeline -->
+            <div class="roadmap-timeline">
+                <!-- Completed Milestone -->
+                <div class="milestone completed">
+                    <div class="milestone-dot">✓</div>
+                    <div class="milestone-content">
+                        <h3>Foundation Phase</h3>
+                        <p>Core programming concepts and basic web development</p>
+                        <div class="milestone-tags">
+                            <span class="tag">HTML/CSS</span>
+                            <span class="tag">JavaScript</span>
+                            <span class="tag">Git</span>
+                        </div>
+                        <button class="start-button">View Details</button>
+                    </div>
+                </div>
+
+                <!-- Current Milestone -->
+                <div class="milestone current">
+                    <div class="milestone-dot">📍</div>
+                    <div class="milestone-content">
+                        <h3>Advanced Development</h3>
+                        <p>Frontend frameworks and backend technologies</p>
+                        <div class="milestone-tags">
+                            <span class="tag">React</span>
+                            <span class="tag">Node.js</span>
+                            <span class="tag">SQL</span>
+                        </div>
+                        <div class="milestone-progress">
+                            <div class="progress-bar" style="width: 45%"></div>
+                            <span>45% Complete</span>
+                        </div>
+                        <button class="start-button">Continue Learning</button>
+                    </div>
+                </div>
+
+                <!-- Locked Milestone -->
+                <div class="milestone locked">
+                    <div class="milestone-dot">🔒</div>
+                    <div class="milestone-content">
+                        <h3>Specialization</h3>
+                        <p>Advanced concepts and specialized technologies</p>
+                        <div class="milestone-tags">
+                            <span class="tag">Cloud</span>
+                            <span class="tag">DevOps</span>
+                            <span class="tag">AI/ML</span>
+                        </div>
+                        <button class="start-button disabled">Locked</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Actions -->
+            <div class="quick-actions">
+                <h3>Recommended Next Steps</h3>
+                <div class="action-buttons">
+                    <button class="action-btn">
+                        <span class="action-icon">📚</span>
+                        Complete React Course
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon">💻</span>
+                        Build Portfolio Project
+                    </button>
+                    <button class="action-btn">
+                        <span class="action-icon">🤝</span>
+                        Join Developer Community
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div class="recent-activity">
+                <h3>Learning Resources</h3>
+                <div class="activity-list">
+                    <div class="activity-item">
+                        <div class="activity-icon">📺</div>
+                        <div class="activity-content">
+                            <p><strong>React.js Complete Course</strong></p>
+                            <span>Recommended Course - 20 hours</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">📝</div>
+                        <div class="activity-content">
+                            <p><strong>Node.js Documentation</strong></p>
+                            <span>Essential Reading Material</span>
+                        </div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-icon">🎯</div>
+                        <div class="activity-content">
+                            <p><strong>Practice Projects</strong></p>
+                            <span>5 Hands-on Projects Available</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Chat Widget -->
+    <div class="chat-widget" id="chatWidget">
+        <button class="chat-toggle" onclick="toggleChat()">💬</button>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <h4>AI Career Coach</h4>
+                <button onclick="toggleChat()">×</button>
+            </div>
+            <div class="chat-messages">
+                <div class="bot-message">Need help with your career roadmap? Ask me anything!</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your question..." id="chatInput">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
