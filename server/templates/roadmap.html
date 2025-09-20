@@ -9,16 +9,58 @@
       href="{{ url_for('static', filename='styles.css') }}"
     />
     <style>
-      .timeline {
+      :root {
+        --bg-color: #f8f9fa;
+        --text-color: #212529;
+        --primary-color: #0d6efd;
+        --secondary-color: #6c757d;
+        --completed-color: #198754;
+        --in-progress-color: #ffc107;
+        --border-color: #dee2e6;
+        --card-bg: #ffffff;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --line-color: #ced4da;
+        --completed-line-color: #198754;
+      }
+
+      body {
+        font-family: 'Poppins', sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        margin: 0;
+        padding: 20px;
         display: flex;
-        gap: 30px;
-        overflow-x: auto;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .roadmap-container {
+        width: 100%;
+        max-width: 1200px;
         margin-top: 20px;
-        padding: 20px 0;
+        position: relative;
+      }
+
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
+        padding: 40px 0;
+        position: relative;
       }
       .lane {
         min-width: 350px;
         flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+        position: relative;
+        padding: 20px;
+        border-radius: 12px;
+        background: var(--card-bg);
+        box-shadow: 0 4px 12px var(--shadow-color);
       }
       .lane-title {
         background: #21262d;
@@ -116,10 +158,30 @@
       .skill-card.in-progress .status-indicator {
         background: #ffc107;
       }
+
+      /* Loading Spinner */
+      .spinner {
+        border: 4px solid var(--border-color);
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .mindmap-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+      }
     </style>
   </head>
   <body>
-    <!-- Sidebar -->
     <div class="sidebar" id="sidebar">
       <div class="sidebar-header">
         <div class="sidebar-icon ai">AI</div>
@@ -168,7 +230,6 @@
       </div>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content" id="main-content">
       <div class="container">
         <div class="header">
@@ -183,117 +244,17 @@
           </div>
         </div>
 
-        <div id="loading" style="display: none">Loading...</div>
-        <div id="roadmapContainer" style="display: none">
-          <div id="timeline" class="timeline"></div>
+        <div id="loading-spinner" style="display: none; text-align: center; margin-top: 50px;">
+          <h3>Loading Roadmap...</h3>
+          <div class="spinner"></div>
+        </div>
+
+        <div id="roadmapContainer">
+            <div id="timeline" class="timeline"></div>
         </div>
       </div>
     </div>
 
-    <!-- Add this inside the main container, beside #roadmapContainer -->
-    <div id="mindmapContainer" style="display: none; margin-top: 20px">
-      <h2>Mind Map</h2>
-      <ul id="mindmap" style="list-style-type: none; padding-left: 20px"></ul>
-    </div>
-
-    <script>
-      async function generateRoadmap() {
-        const generateBtn = document.getElementById("generateBtn");
-        const loading = document.getElementById("loading");
-        const roadmapContainer = document.getElementById("roadmapContainer");
-
-        try {
-          generateBtn.disabled = true;
-          loading.style.display = "block";
-          roadmapContainer.style.display = "none";
-
-          // Fetch data from Flask backend
-          const response = await fetch("/roadmap/genroadmapData", {
-            method: "POST",
-          });
-          if (!response.ok)
-            throw new Error(`HTTP error! status: ${response.status}`);
-
-          const data = await response.json();
-          renderRoadmap(data);
-          loading.style.display = "none";
-          roadmapContainer.style.display = "block";
-        } catch (err) {
-          console.error("Error:", err);
-          loading.textContent = "Failed to load roadmap!";
-        } finally {
-          generateBtn.disabled = false;
-        }
-      }
-
-      function renderRoadmap(data) {
-        const timeline = document.getElementById("timeline");
-        timeline.innerHTML = "";
-
-        // Each lane
-        data.lanes.forEach((lane) => {
-          const laneDiv = document.createElement("div");
-          laneDiv.className = "lane";
-          laneDiv.innerHTML = `<div class="lane-title">${lane.title}</div>`;
-
-          // Each card
-          lane.cards.forEach((card) => {
-            const cardDiv = document.createElement("div");
-            cardDiv.className = `skill-card ${card.status}`;
-            cardDiv.innerHTML = `
-            <div class="card-header">
-              <h4 class="card-title">${card.title}</h4>
-              <span class="status-indicator"></span>
-            </div>`;
-            laneDiv.appendChild(cardDiv);
-          });
-
-          timeline.appendChild(laneDiv);
-        });
-      }
-
-      document
-        .getElementById("generateBtn")
-        .addEventListener("click", generateRoadmap);
-
-      // === Mind Map Rendering ===
-      const mindmapContainer = document.getElementById("mindmapContainer");
-      const mindmap = document.getElementById("mindmap");
-      mindmap.innerHTML = "";
-
-      // Loop lanes
-      data.lanes.forEach((lane) => {
-        const laneLi = document.createElement("li");
-        laneLi.textContent = lane.title;
-        laneLi.style.fontWeight = "600";
-        laneLi.style.color = "#0d6efd";
-
-        const cardUl = document.createElement("ul");
-        cardUl.style.listStyleType = "circle";
-        cardUl.style.paddingLeft = "20px";
-
-        lane.cards.forEach((card) => {
-          const cardLi = document.createElement("li");
-          cardLi.textContent = `${card.title} (${card.status})`;
-
-          // Color code based on status
-          if (card.status === "completed") cardLi.style.color = "#198754";
-          else if (card.status === "in-progress")
-            cardLi.style.color = "#ffc107";
-          else if (card.status === "locked") cardLi.style.color = "#6c757d";
-
-          cardUl.appendChild(cardLi);
-        });
-
-        laneLi.appendChild(cardUl);
-        mindmap.appendChild(laneLi);
-      });
-
-      // Show mindmap container
-      mindmapContainer.style.display = "block";
-    </script>
-
-    <!-- AI Chat Widget -->
     <div
       class="chat-widget"
       style="position: fixed; bottom: 20px; right: 20px; z-index: 1000"
@@ -389,6 +350,102 @@
         </div>
       </div>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <script>
+        async function generateRoadmap() {
+            const generateBtn = document.getElementById("generateBtn");
+            const loadingSpinner = document.getElementById("loading-spinner");
+            const roadmapContainer = document.getElementById("roadmapContainer");
+            const timeline = document.getElementById("timeline");
+
+            try {
+                // Show loading state
+                generateBtn.disabled = true;
+                loadingSpinner.style.display = "block";
+                roadmapContainer.style.display = "none";
+                
+                // Fetch data from Flask backend
+                const response = await fetch("/roadmap/genroadmapData", {
+                    method: "POST",
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                renderRoadmap(data);
+                
+                // Hide loading state and show roadmap
+                loadingSpinner.style.display = "none";
+                roadmapContainer.style.display = "block";
+            } catch (err) {
+                console.error("Error fetching or rendering roadmap:", err);
+                loadingSpinner.textContent = "Failed to load roadmap. Please try again later.";
+            } finally {
+                generateBtn.disabled = false;
+            }
+        }
+
+        function renderRoadmap(data) {
+            const timeline = document.getElementById("timeline");
+            timeline.innerHTML = "";
+
+            // Each lane
+            data.lanes.forEach((lane, laneIndex) => {
+                const laneDiv = document.createElement("div");
+                laneDiv.className = "lane";
+                laneDiv.innerHTML = `<div class="lane-title">${lane.title}</div>`;
+
+                // Each card
+                lane.cards.forEach((card) => {
+                    const cardDiv = document.createElement("div");
+                    cardDiv.className = `skill-card ${card.status}`;
+                    cardDiv.dataset.id = card.id; // Add data-id for future interaction if needed
+                    cardDiv.innerHTML = `
+                        <div class="card-header">
+                            <h4 class="card-title">${card.title}</h4>
+                            <span class="status-indicator"></span>
+                        </div>`;
+                    laneDiv.appendChild(cardDiv);
+                });
+
+                timeline.appendChild(laneDiv);
+            });
+        }
+
+        // Event listener for the generate button
+        document.getElementById("generateBtn").addEventListener("click", generateRoadmap);
+        
+        // --- Dummy functions for the chat widget to prevent errors ---
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
+                chatWindow.style.display = 'flex';
+                setTimeout(() => {
+                    chatWindow.style.transform = 'translateY(0)';
+                    chatWindow.style.opacity = '1';
+                }, 10);
+            } else {
+                chatWindow.style.transform = 'translateY(20px)';
+                chatWindow.style.opacity = '0';
+                setTimeout(() => {
+                    chatWindow.style.display = 'none';
+                }, 300);
+            }
+        }
+        function sendMessage() {
+            const chatInput = document.getElementById('chatInput');
+            const message = chatInput.value.trim();
+            if (message) {
+                const chatMessages = document.getElementById('chatMessages');
+                const userMessageDiv = document.createElement('div');
+                userMessageDiv.className = 'user-message';
+                userMessageDiv.textContent = message;
+                chatMessages.appendChild(userMessageDiv);
+                chatInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+    </script>
   </body>
 </html>
