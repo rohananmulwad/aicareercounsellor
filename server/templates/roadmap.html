@@ -24,7 +24,7 @@
       }
 
       body {
-        font-family: 'Poppins', sans-serif;
+        font-family: "Poppins", sans-serif;
         background-color: var(--bg-color);
         color: var(--text-color);
         margin: 0;
@@ -171,8 +171,12 @@
       }
 
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
       .mindmap-container {
         display: flex;
@@ -244,13 +248,16 @@
           </div>
         </div>
 
-        <div id="loading-spinner" style="display: none; text-align: center; margin-top: 50px;">
+        <div
+          id="loading-spinner"
+          style="display: none; text-align: center; margin-top: 50px"
+        >
           <h3>Loading Roadmap...</h3>
           <div class="spinner"></div>
         </div>
 
         <div id="roadmapContainer">
-            <div id="timeline" class="timeline"></div>
+          <div id="timeline" class="timeline"></div>
         </div>
       </div>
     </div>
@@ -350,102 +357,109 @@
         </div>
       </div>
     </div>
-    
+
     <script>
-        async function generateRoadmap() {
-            const generateBtn = document.getElementById("generateBtn");
-            const loadingSpinner = document.getElementById("loading-spinner");
-            const roadmapContainer = document.getElementById("roadmapContainer");
-            const timeline = document.getElementById("timeline");
+      async function generateRoadmap() {
+        const generateBtn = document.getElementById("generateBtn");
+        const loadingSpinner = document.getElementById("loading-spinner");
+        const roadmapContainer = document.getElementById("roadmapContainer");
+        const timeline = document.getElementById("timeline");
 
-            try {
-                // Show loading state
-                generateBtn.disabled = true;
-                loadingSpinner.style.display = "block";
-                roadmapContainer.style.display = "none";
-                
-                // Fetch data from Flask backend
-                const response = await fetch("/roadmap/genroadmapData", {
-                    method: "POST",
-                });
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+        try {
+          // Show loading state
+          generateBtn.disabled = true;
+          loadingSpinner.style.display = "block";
+          roadmapContainer.style.display = "none";
 
-                const data = await response.json();
-                renderRoadmap(data);
-                
-                // Hide loading state and show roadmap
-                loadingSpinner.style.display = "none";
-                roadmapContainer.style.display = "block";
-            } catch (err) {
-                console.error("Error fetching or rendering roadmap:", err);
-                loadingSpinner.textContent = "Failed to load roadmap. Please try again later.";
-            } finally {
-                generateBtn.disabled = false;
-            }
+          // Fetch data from Flask backend
+          const response = await fetch("/roadmap/genroadmapData", {
+            method: "POST",
+          });
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+          renderRoadmap(data);
+
+          // Hide loading state and show roadmap
+          loadingSpinner.style.display = "none";
+          roadmapContainer.style.display = "block";
+        } catch (err) {
+          console.error("Error fetching or rendering roadmap:", err);
+          loadingSpinner.textContent =
+            "Failed to load roadmap. Please try again later.";
+        } finally {
+          generateBtn.disabled = false;
         }
+      }
 
-        function renderRoadmap(data) {
-            const timeline = document.getElementById("timeline");
-            timeline.innerHTML = "";
+      function renderRoadmap(data) {
+        const timeline = document.getElementById("timeline");
+        timeline.innerHTML = "";
 
-            // Each lane
-            data.lanes.forEach((lane, laneIndex) => {
-                const laneDiv = document.createElement("div");
-                laneDiv.className = "lane";
-                laneDiv.innerHTML = `<div class="lane-title">${lane.title}</div>`;
+        // Each lane
+        data.lanes.forEach((lane, laneIndex) => {
+          const laneDiv = document.createElement("div");
+          laneDiv.className = "lane";
+          laneDiv.innerHTML = `<div class="lane-title">${lane.title}</div>`;
 
-                // Each card
-                lane.cards.forEach((card) => {
-                    const cardDiv = document.createElement("div");
-                    cardDiv.className = `skill-card ${card.status}`;
-                    cardDiv.dataset.id = card.id; // Add data-id for future interaction if needed
-                    cardDiv.innerHTML = `
+          // Each card
+          lane.cards.forEach((card) => {
+            const cardDiv = document.createElement("div");
+            cardDiv.className = `skill-card ${card.status}`;
+            cardDiv.dataset.id = card.id; // Add data-id for future interaction if needed
+            cardDiv.innerHTML = `
                         <div class="card-header">
                             <h4 class="card-title">${card.title}</h4>
                             <span class="status-indicator"></span>
                         </div>`;
-                    laneDiv.appendChild(cardDiv);
-                });
+            laneDiv.appendChild(cardDiv);
+          });
 
-                timeline.appendChild(laneDiv);
-            });
-        }
+          timeline.appendChild(laneDiv);
+        });
+      }
 
-        // Event listener for the generate button
-        document.getElementById("generateBtn").addEventListener("click", generateRoadmap);
-        
-        // --- Dummy functions for the chat widget to prevent errors ---
-        function toggleChat() {
-            const chatWindow = document.getElementById('chatWindow');
-            if (chatWindow.style.display === 'none' || chatWindow.style.display === '') {
-                chatWindow.style.display = 'flex';
-                setTimeout(() => {
-                    chatWindow.style.transform = 'translateY(0)';
-                    chatWindow.style.opacity = '1';
-                }, 10);
-            } else {
-                chatWindow.style.transform = 'translateY(20px)';
-                chatWindow.style.opacity = '0';
-                setTimeout(() => {
-                    chatWindow.style.display = 'none';
-                }, 300);
-            }
+      // Event listener for the generate button
+      document
+        .getElementById("generateBtn")
+        .addEventListener("click", generateRoadmap);
+
+      // --- Dummy functions for the chat widget to prevent errors ---
+      function toggleChat() {
+        const chatWindow = document.getElementById("chatWindow");
+        if (
+          chatWindow.style.display === "none" ||
+          chatWindow.style.display === ""
+        ) {
+          chatWindow.style.display = "flex";
+          setTimeout(() => {
+            chatWindow.style.transform = "translateY(0)";
+            chatWindow.style.opacity = "1";
+          }, 10);
+        } else {
+          chatWindow.style.transform = "translateY(20px)";
+          chatWindow.style.opacity = "0";
+          setTimeout(() => {
+            chatWindow.style.display = "none";
+          }, 300);
         }
-        function sendMessage() {
-            const chatInput = document.getElementById('chatInput');
-            const message = chatInput.value.trim();
-            if (message) {
-                const chatMessages = document.getElementById('chatMessages');
-                const userMessageDiv = document.createElement('div');
-                userMessageDiv.className = 'user-message';
-                userMessageDiv.textContent = message;
-                chatMessages.appendChild(userMessageDiv);
-                chatInput.value = '';
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
+      }
+      function sendMessage() {
+        const chatInput = document.getElementById("chatInput");
+        const message = chatInput.value.trim();
+        if (message) {
+          const chatMessages = document.getElementById("chatMessages");
+          const userMessageDiv = document.createElement("div");
+          userMessageDiv.className = "user-message";
+          userMessageDiv.textContent = message;
+          chatMessages.appendChild(userMessageDiv);
+          chatInput.value = "";
+          chatMessages.scrollTop = chatMessages.scrollHeight;
         }
+      }
     </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>
