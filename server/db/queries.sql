@@ -56,7 +56,7 @@ SELECT chatId, messageData, chatRole, createdAt
 FROM chats
 WHERE userId = %s
 ORDER BY createdAt DESC
-LIMIT 10
+LIMIT 20
 
 -- select_chat_vector
 SELECT chatId, messageData, chatRole, createdAt
