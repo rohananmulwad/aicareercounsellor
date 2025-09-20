@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Roadmap Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .generate-btn {
+            display: block;
+            margin: 0 auto 30px;
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .generate-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            color: white;
+            font-size: 1.2rem;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 4px solid white;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .roadmap-container {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .lanes-container {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px 0;
+        }
+
+        .lane {
+            min-width: 350px;
+            flex-shrink: 0;
+        }
+
+        .lane-title {
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            padding: 15px 20px;
+            border-radius: 15px 15px 0 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .cards-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        /* New CSS for the card flip effect */
+        .skill-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.6s ease; /* Slower, smoother transition */
+            cursor: pointer;
+            border-left: 5px solid #667eea;
+            transform-style: preserve-3d; /* Enable 3D space */
+            position: relative;
+        }
+
+        .skill-card:hover {
+            transform: translateY(-5px) rotateY(5deg); /* Add a slight rotation on hover */
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        /* Initial state for the fade-in animation */
+        .skill-card.fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* Final state of the fade-in animation */
+        .skill-card.fade-in-active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #333;
+            flex: 1;
+        }
+
+        .difficulty-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-left: 10px;
+        }
+
+        .difficulty-beginner {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .difficulty-intermediate {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .difficulty-advanced {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .card-description {
+            color: #666;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .time-estimate {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .card-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .card-details.expanded {
+            max-height: 1000px;
+        }
+
+        .detailed-description {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .prerequisites {
+            margin: 15px 0;
+        }
+
+        .prerequisites h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+
+        .prerequisite-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .prerequisite-tag {
+            background: #e1f5fe;
+            color: #0277bd;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .resources {
+            margin-top: 15px;
+        }
+
+        .resources h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .resource-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: #f1f3f4;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            transition: background-color 0.2s ease;
+        }
+
+        .resource-item:hover {
+            background: #e8eaed;
+        }
+
+        .resource-type {
+            background: #667eea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .expand-btn {
+            width: 100%;
+            padding: 10px;
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .expand-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .lanes-container {
+                flex-direction: column;
+            }
+            
+            .lane {
+                min-width: auto;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Career Roadmap Generator</h1>
+            <p>Get your personalized career development path powered by AI</p>
+        </div>
+
+        <button id="generateBtn" class="generate-btn">
+            Generate My Roadmap
+        </button>
+
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Generating your personalized career roadmap...</p>
+        </div>
+
+        <div id="roadmapContainer" class="roadmap-container">
+            <div id="lanesContainer" class="lanes-container">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        const generateBtn = document.getElementById('generateBtn');
+        const loading = document.getElementById('loading');
+        const roadmapContainer = document.getElementById('roadmapContainer');
+        const lanesContainer = document.getElementById('lanesContainer');
+
+        generateBtn.addEventListener('click', generateRoadmap);
+
+        async function generateRoadmap() {
+            try {
+                // Show loading state
+                generateBtn.disabled = true;
+                generateBtn.textContent = 'Generating...';
+                loading.style.display = 'block';
+                roadmapContainer.style.display = 'none';
+
+                // Make API call to your Flask backend
+                const response = await fetch('/roadmap/genroadmapData', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                // Hide loading and show roadmap
+                loading.style.display = 'none';
+                displayRoadmap(data);
+                roadmapContainer.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error generating roadmap:', error);
+                loading.style.display = 'none';
+                showError(error.message);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Generate My Roadmap';
+            }
+        }
+
+        function displayRoadmap(data) {
+            lanesContainer.innerHTML = '';
+            
+            let cardIndex = 0;
+            data.lanes.forEach(lane => {
+                const laneElement = createLaneElement(lane);
+                lanesContainer.appendChild(laneElement);
+                
+                // Get all cards in the newly created lane
+                const cards = laneElement.querySelectorAll('.skill-card');
+                
+                cards.forEach((card, index) => {
+                    // Stagger the animation of each card
+                    setTimeout(() => {
+                        card.classList.remove('fade-in');
+                        card.classList.add('fade-in-active');
+                    }, 50 * cardIndex); // Adjust the 50ms for faster/slower animation
+                    cardIndex++;
+                });
+            });
+        }
+
+        function createLaneElement(lane) {
+            const laneDiv = document.createElement('div');
+            laneDiv.className = 'lane';
+
+            const laneTitle = document.createElement('div');
+            laneTitle.className = 'lane-title';
+            laneTitle.textContent = lane.title;
+
+            const cardsContainer = document.createElement('div');
+            cardsContainer.className = 'cards-container';
+
+            lane.cards.forEach(card => {
+                const cardElement = createCardElement(card);
+                cardsContainer.appendChild(cardElement);
+            });
+
+            laneDiv.appendChild(laneTitle);
+            laneDiv.appendChild(cardsContainer);
+
+            return laneDiv;
+        }
+
+        function createCardElement(card) {
+            const cardDiv = document.createElement('div');
+            cardDiv.className = 'skill-card';
+            cardDiv.classList.add('fade-in');
+
+            cardDiv.innerHTML = `
+                <div class="card-header">
+                    <h3 class="card-title">${card.title}</h3>
+                    <span class="difficulty-badge difficulty-${card.difficulty.toLowerCase()}">${card.difficulty}</span>
+                </div>
+                <p class="card-description">${card.description}</p>
+                <span class="time-estimate">⏰ ${card.timeEstimate}</span>
+                
+                <div class="card-details" id="details-${card.id}">
+                    <div class="detailed-description">
+                        ${card.detailedDescription}
+                    </div>
+                    
+                    ${card.prerequisites && card.prerequisites.length > 0 ? `
+                        <div class="prerequisites">
+                            <h4>📋 Prerequisites:</h4>
+                            <div class="prerequisite-list">
+                                ${card.prerequisites.map(prereq => `<span class="prerequisite-tag">${prereq}</span>`).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                    
+                    <div class="resources">
+                        <h4>📚 Learning Resources:</h4>
+                        <div class="resource-list">
+                            ${card.resources.map(resource => `
+                                <a href="${resource.url}" target="_blank" class="resource-item">
+                                    <span class="resource-type">${resource.type}</span>
+                                    <span>${resource.title}</span>
+                                </a>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="expand-btn" onclick="toggleCardDetails('${card.id}', this)">
+                    Show Details
+                </button>
+            `;
+
+            return cardDiv;
+        }
+
+        function toggleCardDetails(cardId, button) {
+            const details = document.getElementById(`details-${cardId}`);
+            const isExpanded = details.classList.contains('expanded');
+
+            if (isExpanded) {
+                details.classList.remove('expanded');
+                button.textContent = 'Show Details';
+            } else {
+                details.classList.add('expanded');
+                button.textContent = 'Hide Details';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.innerHTML = `
+                <h3>❌ Error</h3>
+                <p>${message}</p>
+            `;
+            
+            // Insert error before roadmap container
+            roadmapContainer.parentNode.insertBefore(errorDiv, roadmapContainer);
+            
+            // Remove error after 5 seconds
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

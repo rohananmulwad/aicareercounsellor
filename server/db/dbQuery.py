@@ -58,7 +58,7 @@ def insertUser(userName, email, passwordHash):
 
 @handleError("Fail to fecth all userData", internal_error=1)
 def getAllUsers():
-    return runQuery("get_all_user", fetchone=True)
+    return runQuery("get_all_user", fetchall=True)
 
 
 @handleError("Fail to fecth user by email", internal_error=1)
