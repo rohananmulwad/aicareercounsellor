@@ -40,10 +40,15 @@
           <div class="sidebar-icon">🔍</div>
           <span class="sidebar-label">Explore Courses...</span>
         </div>
-        <div class="sidebar-item" onclick="navigateTo('skills')">
-          <div class="sidebar-icon">🎯</div>
-          <span class="sidebar-label">Skill Advisor</span>
-        </div>
+        <a
+          href="{{ url_for('aiRouter.chatStream') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item" onclick="navigateTo('skills')">
+            <div class="sidebar-icon">🎯</div>
+            <span class="sidebar-label">Skill Advisor</span>
+          </div>
+        </a>
         <a
           href="{{ url_for('roadmap.genRoadMap') }}"
           style="text-decoration: none; color: inherit; display: block"

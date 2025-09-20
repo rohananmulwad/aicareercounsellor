@@ -324,8 +324,6 @@
       .chat-messages::-webkit-scrollbar-thumb:hover {
         background: #94a3b8;
       }
-
-      
     </style>
   </head>
   <body>
@@ -337,10 +335,16 @@
       </div>
 
       <nav class="sidebar-nav">
-        <div class="sidebar-item active" onclick="navigateTo('dashboard')">
-          <div class="sidebar-icon">🏠</div>
-          <span class="sidebar-label">Dashboard</span>
-        </div>
+        <a
+          href="{{ url_for('userRouter.dashboard') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">🏠</div>
+            <span class="sidebar-label">Dashboard</span>
+          </div>
+        </a>
+
         <div class="sidebar-item" onclick="navigateTo('assessment')">
           <div class="sidebar-icon">📊</div>
           <span class="sidebar-label">Quiz</span>
@@ -349,10 +353,16 @@
           <div class="sidebar-icon">🔍</div>
           <span class="sidebar-label">Explore Courses...</span>
         </div>
-        <div class="sidebar-item" onclick="navigateTo('skills')">
-          <div class="sidebar-icon">🎯</div>
-          <span class="sidebar-label">Skill Advisor</span>
-        </div>
+
+        <a
+          href="{{ url_for('aiRouter.chatStream') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item" onclick="navigateTo('skills')">
+            <div class="sidebar-icon">🎯</div>
+            <span class="sidebar-label">Skill Advisor</span>
+          </div>
+        </a>
         <a
           href="{{ url_for('roadmap.genRoadMap') }}"
           style="text-decoration: none; color: inherit; display: block"
