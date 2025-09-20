@@ -1,540 +1,394 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Career Roadmap Generator</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Roadmap - AI Career Guidance</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      .timeline {
+        display: flex;
+        gap: 30px;
+        overflow-x: auto;
+        margin-top: 20px;
+        padding: 20px 0;
+      }
+      .lane {
+        min-width: 350px;
+        flex-shrink: 0;
+      }
+      .lane-title {
+        background: #21262d;
+        border: 1px solid #30363d;
+        color: #f0f6fc;
+        padding: 16px;
+        border-radius: 10px;
+        font-size: 1.3rem;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 16px;
+        position: relative;
+      }
+      .lane-title::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #58a6ff, #f78166, #79c0ff);
+        border-radius: 10px 10px 0 0;
+      }
+      .skill-card {
+        background: #f1f3f5;
+        border: 1px solid #dee2e6;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 12px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+      .skill-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+      }
+      .skill-card.completed {
+        border-color: #198754;
+      }
+      .skill-card.in-progress {
+        border-color: #ffc107;
+      }
+      .skill-card.locked {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #212529;
+      }
+      .status-indicator {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #ccc;
+      }
+      .generate-btn {
+        background: linear-gradient(90deg, #58a6ff, #f78166, #79c0ff);
+        color: #fff;
+        padding: 12px 28px;
+        font-size: 1rem;
+        font-weight: 600;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(88, 166, 255, 0.4);
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+      }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
+      .generate-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(247, 129, 102, 0.6);
+      }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
+      .generate-btn:active {
+        transform: translateY(0);
+        box-shadow: 0 4px 15px rgba(121, 192, 255, 0.4);
+      }
 
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-            color: white;
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .header p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        .generate-btn {
-            display: block;
-            margin: 0 auto 30px;
-            padding: 15px 30px;
-            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
-        .generate-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-        }
-
-        .generate-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .loading {
-            text-align: center;
-            color: white;
-            font-size: 1.2rem;
-            margin: 20px 0;
-        }
-
-        .spinner {
-            border: 4px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top: 4px solid white;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .roadmap-container {
-            display: none;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-
-        .lanes-container {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding: 20px 0;
-        }
-
-        .lane {
-            min-width: 350px;
-            flex-shrink: 0;
-        }
-
-        .lane-title {
-            background: rgba(255,255,255,0.9);
-            color: #333;
-            padding: 15px 20px;
-            border-radius: 15px 15px 0 0;
-            font-size: 1.3rem;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .cards-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        /* New CSS for the card flip effect */
-        .skill-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.6s ease; /* Slower, smoother transition */
-            cursor: pointer;
-            border-left: 5px solid #667eea;
-            transform-style: preserve-3d; /* Enable 3D space */
-            position: relative;
-        }
-
-        .skill-card:hover {
-            transform: translateY(-5px) rotateY(5deg); /* Add a slight rotation on hover */
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-
-        /* Initial state for the fade-in animation */
-        .skill-card.fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        /* Final state of the fade-in animation */
-        .skill-card.fade-in-active {
-            opacity: 1;
-            transform: translateY(0);
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 10px;
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #333;
-            flex: 1;
-        }
-
-        .difficulty-badge {
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-left: 10px;
-        }
-
-        .difficulty-beginner {
-            background: #d4edda;
-            color: #155724;
-        }
-
-        .difficulty-intermediate {
-            background: #fff3cd;
-            color: #856404;
-        }
-
-        .difficulty-advanced {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
-        .card-description {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 10px;
-        }
-
-        .time-estimate {
-            display: inline-block;
-            background: #e3f2fd;
-            color: #1976d2;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-        }
-
-        .card-details {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-
-        .card-details.expanded {
-            max-height: 1000px;
-        }
-
-        .detailed-description {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            color: #555;
-            line-height: 1.6;
-        }
-
-        .prerequisites {
-            margin: 15px 0;
-        }
-
-        .prerequisites h4 {
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 1rem;
-        }
-
-        .prerequisite-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .prerequisite-tag {
-            background: #e1f5fe;
-            color: #0277bd;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .resources {
-            margin-top: 15px;
-        }
-
-        .resources h4 {
-            color: #333;
-            margin-bottom: 10px;
-            font-size: 1rem;
-        }
-
-        .resource-list {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .resource-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            background: #f1f3f4;
-            border-radius: 8px;
-            text-decoration: none;
-            color: #333;
-            transition: background-color 0.2s ease;
-        }
-
-        .resource-item:hover {
-            background: #e8eaed;
-        }
-
-        .resource-type {
-            background: #667eea;
-            color: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .expand-btn {
-            width: 100%;
-            padding: 10px;
-            background: none;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            color: #667eea;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.2s ease;
-        }
-
-        .expand-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .error {
-            background: #f8d7da;
-            color: #721c24;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border: 1px solid #f5c6cb;
-        }
-
-        @media (max-width: 768px) {
-            .lanes-container {
-                flex-direction: column;
-            }
-            
-            .lane {
-                min-width: auto;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-        }
+      .generate-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+      .skill-card.completed .status-indicator {
+        background: #198754;
+      }
+      .skill-card.in-progress .status-indicator {
+        background: #ffc107;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-icon ai">AI</div>
+        <h3 class="sidebar-title">CareerAI</h3>
+      </div>
+      <nav class="sidebar-nav">
+        <a
+          href="{{ url_for('userRouter.dashboard') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">🏠</div>
+            <span class="sidebar-label">Dashboard</span>
+          </div>
+        </a>
+
+        <div class="sidebar-item" onclick="navigateTo('assessment')">
+          📊 Quiz
+        </div>
+        <div class="sidebar-item" onclick="navigateTo('careers')">
+          🔍 Explore Courses
+        </div>
+        <div class="sidebar-item" onclick="navigateTo('skills')">
+          🎯 Skill Advisor
+        </div>
+        <a
+          href="{{ url_for('roadmap.genRoadMap') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">🗺️</div>
+            <span class="sidebar-label">Career Roadmap</span>
+          </div>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-item" onclick="navigateTo('settings')">
+          <div class="sidebar-icon">⚙️</div>
+          <span class="sidebar-label">Settings</span>
+        </div>
+        <div class="sidebar-item" onclick="navigateTo('help')">
+          <div class="sidebar-icon">❓</div>
+          <span class="sidebar-label">Help & Support</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="main-content">
+      <div class="container">
         <div class="header">
-            <h1>🚀 Career Roadmap Generator</h1>
-            <p>Get your personalized career development path powered by AI</p>
+          <div class="welcome-text">
+            <h1>Your Career Roadmap 🗺️</h1>
+            <p>Your personalized path to success in Software Development</p>
+          </div>
+          <div class="header-actions">
+            <button id="generateBtn" class="generate-btn">
+              Generate My Roadmap
+            </button>
+          </div>
         </div>
 
-        <button id="generateBtn" class="generate-btn">
-            Generate My Roadmap
-        </button>
-
-        <div id="loading" class="loading" style="display: none;">
-            <div class="spinner"></div>
-            <p>Generating your personalized career roadmap...</p>
+        <div id="loading" style="display: none">Loading...</div>
+        <div id="roadmapContainer" style="display: none">
+          <div id="timeline" class="timeline"></div>
         </div>
+      </div>
+    </div>
 
-        <div id="roadmapContainer" class="roadmap-container">
-            <div id="lanesContainer" class="lanes-container">
-                </div>
-        </div>
+    <!-- Add this inside the main container, beside #roadmapContainer -->
+    <div id="mindmapContainer" style="display: none; margin-top: 20px">
+      <h2>Mind Map</h2>
+      <ul id="mindmap" style="list-style-type: none; padding-left: 20px"></ul>
     </div>
 
     <script>
-        const generateBtn = document.getElementById('generateBtn');
-        const loading = document.getElementById('loading');
-        const roadmapContainer = document.getElementById('roadmapContainer');
-        const lanesContainer = document.getElementById('lanesContainer');
+      async function generateRoadmap() {
+        const generateBtn = document.getElementById("generateBtn");
+        const loading = document.getElementById("loading");
+        const roadmapContainer = document.getElementById("roadmapContainer");
 
-        generateBtn.addEventListener('click', generateRoadmap);
+        try {
+          generateBtn.disabled = true;
+          loading.style.display = "block";
+          roadmapContainer.style.display = "none";
 
-        async function generateRoadmap() {
-            try {
-                // Show loading state
-                generateBtn.disabled = true;
-                generateBtn.textContent = 'Generating...';
-                loading.style.display = 'block';
-                roadmapContainer.style.display = 'none';
+          // Fetch data from Flask backend
+          const response = await fetch("/roadmap/genroadmapData", {
+            method: "POST",
+          });
+          if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
 
-                // Make API call to your Flask backend
-                const response = await fetch('/roadmap/genroadmapData', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
-                // Hide loading and show roadmap
-                loading.style.display = 'none';
-                displayRoadmap(data);
-                roadmapContainer.style.display = 'block';
-
-            } catch (error) {
-                console.error('Error generating roadmap:', error);
-                loading.style.display = 'none';
-                showError(error.message);
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.textContent = 'Generate My Roadmap';
-            }
+          const data = await response.json();
+          renderRoadmap(data);
+          loading.style.display = "none";
+          roadmapContainer.style.display = "block";
+        } catch (err) {
+          console.error("Error:", err);
+          loading.textContent = "Failed to load roadmap!";
+        } finally {
+          generateBtn.disabled = false;
         }
+      }
 
-        function displayRoadmap(data) {
-            lanesContainer.innerHTML = '';
-            
-            let cardIndex = 0;
-            data.lanes.forEach(lane => {
-                const laneElement = createLaneElement(lane);
-                lanesContainer.appendChild(laneElement);
-                
-                // Get all cards in the newly created lane
-                const cards = laneElement.querySelectorAll('.skill-card');
-                
-                cards.forEach((card, index) => {
-                    // Stagger the animation of each card
-                    setTimeout(() => {
-                        card.classList.remove('fade-in');
-                        card.classList.add('fade-in-active');
-                    }, 50 * cardIndex); // Adjust the 50ms for faster/slower animation
-                    cardIndex++;
-                });
-            });
-        }
+      function renderRoadmap(data) {
+        const timeline = document.getElementById("timeline");
+        timeline.innerHTML = "";
 
-        function createLaneElement(lane) {
-            const laneDiv = document.createElement('div');
-            laneDiv.className = 'lane';
+        // Each lane
+        data.lanes.forEach((lane) => {
+          const laneDiv = document.createElement("div");
+          laneDiv.className = "lane";
+          laneDiv.innerHTML = `<div class="lane-title">${lane.title}</div>`;
 
-            const laneTitle = document.createElement('div');
-            laneTitle.className = 'lane-title';
-            laneTitle.textContent = lane.title;
-
-            const cardsContainer = document.createElement('div');
-            cardsContainer.className = 'cards-container';
-
-            lane.cards.forEach(card => {
-                const cardElement = createCardElement(card);
-                cardsContainer.appendChild(cardElement);
-            });
-
-            laneDiv.appendChild(laneTitle);
-            laneDiv.appendChild(cardsContainer);
-
-            return laneDiv;
-        }
-
-        function createCardElement(card) {
-            const cardDiv = document.createElement('div');
-            cardDiv.className = 'skill-card';
-            cardDiv.classList.add('fade-in');
-
+          // Each card
+          lane.cards.forEach((card) => {
+            const cardDiv = document.createElement("div");
+            cardDiv.className = `skill-card ${card.status}`;
             cardDiv.innerHTML = `
-                <div class="card-header">
-                    <h3 class="card-title">${card.title}</h3>
-                    <span class="difficulty-badge difficulty-${card.difficulty.toLowerCase()}">${card.difficulty}</span>
-                </div>
-                <p class="card-description">${card.description}</p>
-                <span class="time-estimate">⏰ ${card.timeEstimate}</span>
-                
-                <div class="card-details" id="details-${card.id}">
-                    <div class="detailed-description">
-                        ${card.detailedDescription}
-                    </div>
-                    
-                    ${card.prerequisites && card.prerequisites.length > 0 ? `
-                        <div class="prerequisites">
-                            <h4>📋 Prerequisites:</h4>
-                            <div class="prerequisite-list">
-                                ${card.prerequisites.map(prereq => `<span class="prerequisite-tag">${prereq}</span>`).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="resources">
-                        <h4>📚 Learning Resources:</h4>
-                        <div class="resource-list">
-                            ${card.resources.map(resource => `
-                                <a href="${resource.url}" target="_blank" class="resource-item">
-                                    <span class="resource-type">${resource.type}</span>
-                                    <span>${resource.title}</span>
-                                </a>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-                
-                <button class="expand-btn" onclick="toggleCardDetails('${card.id}', this)">
-                    Show Details
-                </button>
-            `;
+            <div class="card-header">
+              <h4 class="card-title">${card.title}</h4>
+              <span class="status-indicator"></span>
+            </div>`;
+            laneDiv.appendChild(cardDiv);
+          });
 
-            return cardDiv;
-        }
+          timeline.appendChild(laneDiv);
+        });
+      }
 
-        function toggleCardDetails(cardId, button) {
-            const details = document.getElementById(`details-${cardId}`);
-            const isExpanded = details.classList.contains('expanded');
+      document
+        .getElementById("generateBtn")
+        .addEventListener("click", generateRoadmap);
 
-            if (isExpanded) {
-                details.classList.remove('expanded');
-                button.textContent = 'Show Details';
-            } else {
-                details.classList.add('expanded');
-                button.textContent = 'Hide Details';
-            }
-        }
+      // === Mind Map Rendering ===
+      const mindmapContainer = document.getElementById("mindmapContainer");
+      const mindmap = document.getElementById("mindmap");
+      mindmap.innerHTML = "";
 
-        function showError(message) {
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error';
-            errorDiv.innerHTML = `
-                <h3>❌ Error</h3>
-                <p>${message}</p>
-            `;
-            
-            // Insert error before roadmap container
-            roadmapContainer.parentNode.insertBefore(errorDiv, roadmapContainer);
-            
-            // Remove error after 5 seconds
-            setTimeout(() => {
-                errorDiv.remove();
-            }, 5000);
-        }
+      // Loop lanes
+      data.lanes.forEach((lane) => {
+        const laneLi = document.createElement("li");
+        laneLi.textContent = lane.title;
+        laneLi.style.fontWeight = "600";
+        laneLi.style.color = "#0d6efd";
+
+        const cardUl = document.createElement("ul");
+        cardUl.style.listStyleType = "circle";
+        cardUl.style.paddingLeft = "20px";
+
+        lane.cards.forEach((card) => {
+          const cardLi = document.createElement("li");
+          cardLi.textContent = `${card.title} (${card.status})`;
+
+          // Color code based on status
+          if (card.status === "completed") cardLi.style.color = "#198754";
+          else if (card.status === "in-progress")
+            cardLi.style.color = "#ffc107";
+          else if (card.status === "locked") cardLi.style.color = "#6c757d";
+
+          cardUl.appendChild(cardLi);
+        });
+
+        laneLi.appendChild(cardUl);
+        mindmap.appendChild(laneLi);
+      });
+
+      // Show mindmap container
+      mindmapContainer.style.display = "block";
     </script>
-</body>
+
+    <!-- AI Chat Widget -->
+    <div
+      class="chat-widget"
+      style="position: fixed; bottom: 20px; right: 20px; z-index: 1000"
+    >
+      <button
+        class="chat-toggle"
+        onclick="toggleChat()"
+        style="
+          padding: 10px 14px;
+          border-radius: 50%;
+          background-color: #58a6ff;
+          color: white;
+          border: none;
+          cursor: pointer;
+        "
+      >
+        💬
+      </button>
+
+      <div
+        id="chatWindow"
+        style="
+          position: absolute;
+          bottom: 60px;
+          right: 0;
+          width: 320px;
+          max-height: 400px;
+          display: none;
+          flex-direction: column;
+          background-color: #fff;
+          border-radius: 10px;
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+          overflow: hidden;
+          transition: all 0.3s ease-in-out;
+          transform: translateY(20px);
+          opacity: 0;
+        "
+      >
+        <div
+          class="chat-header"
+          style="
+            background-color: #21262d;
+            color: #f0f6fc;
+            padding: 10px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+          "
+        >
+          <h4>AI Career Coach</h4>
+          <button
+            onclick="toggleChat()"
+            style="
+              background: none;
+              border: none;
+              color: #f0f6fc;
+              cursor: pointer;
+              font-size: 18px;
+            "
+          >
+            ×
+          </button>
+        </div>
+
+        <div id="chatMessages" style="flex: 1; padding: 10px; overflow-y: auto">
+          <div class="bot-message">
+            Hi! I'm your AI career coach. How can I help you today?
+          </div>
+        </div>
+
+        <div style="display: flex; border-top: 1px solid #ddd">
+          <input
+            type="text"
+            id="chatInput"
+            placeholder="Type your question..."
+            style="flex: 1; padding: 8px; border: none; outline: none"
+            onkeydown="if(event.key==='Enter'){ sendMessage(); }"
+          />
+          <button
+            onclick="sendMessage()"
+            style="
+              padding: 8px 12px;
+              background-color: #58a6ff;
+              border: none;
+              color: white;
+              cursor: pointer;
+              border-radius: 0 5px 5px 0;
+            "
+          >
+            Send
+          </button>
+        </div>
+      </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
 </html>

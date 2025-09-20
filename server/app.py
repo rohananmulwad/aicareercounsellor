@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask
+from flask import Flask,render_template
 from flask_bcrypt import Bcrypt
 from controler import allControllers
 from db import gernalQuery
@@ -27,7 +27,10 @@ def create_app():
 
     for bp in allControllers:
         app.register_blueprint(bp)
-
+        
+    @app.route("/")
+    def home():
+        return render_template("index.html")
     return app
 
 

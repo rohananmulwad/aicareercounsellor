@@ -55,3 +55,10 @@ def login():
 @loginRequired
 def dashboard(user):
     return render_template("dashboard.html", user=user)
+
+@userRouter.route("/profile", methods=["GET", "POST"])
+@handleError("profile error")
+@loginRequired
+def profile(user):
+    return render_template("profile.html", user=user)
+
