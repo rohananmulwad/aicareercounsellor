@@ -1,6 +1,6 @@
 from flask import Blueprint, request, Response, render_template, jsonify
 from utils.errorHandler import handleError
-from db.dbQuery import getChatData
+from db.dbQuery import getChatData,getQuizData
 from middleware.authMiddleware import loginRequired
 from aiModle import Googlellm
 from langchain_core.prompts import ChatPromptTemplate
@@ -33,6 +33,7 @@ def genRoadMap(user):
 def genRoadMapData(user):
     userId = user["userId"]
     chatData = getChatData(userId)  # user data isn't going to be cache
+    quizData = getQuizData(userId)
     # as it's part of dynamic data
     # as llm depend's on this data whether it's update or not
     # if data is not update then use cache layer and render that smae data or
@@ -41,8 +42,9 @@ def genRoadMapData(user):
     # need to include more data form postgresSql
     # add and retrive more table from db
 
-    if chatData is None:
+    if chatData is None and quizData is None:
         chatData = {}
+        quizData = {}
 
     # this message variable is prompt
     # this pice of will pass data and prompt
@@ -109,9 +111,9 @@ def genRoadMapData(user):
     Generate the complete JSON object now.""")
     ])
     
-    
+    combineUserdata = [chatData, quizData]
     prompt_text = roadmapPrompt.format(
-        userData=json.dumps(chatData, default=json_serializer))
+        userData=json.dumps(combineUserdata, default=json_serializer))
     chunks = ""
     for chunk in llmService.askGeminiStream(data=prompt_text):
         chunks += chunk

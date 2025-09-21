@@ -28,14 +28,26 @@
       </div>
 
       <nav class="sidebar-nav">
-        <div class="sidebar-item active" onclick="navigateTo('dashboard')">
-          <div class="sidebar-icon">🏠</div>
-          <span class="sidebar-label">Dashboard</span>
-        </div>
-        <div class="sidebar-item" onclick="navigateTo('assessment')">
-          <div class="sidebar-icon">📊</div>
-          <span class="sidebar-label">Quiz</span>
-        </div>
+        <a
+          href="{{ url_for('userRouter.dashboard') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">🏠</div>
+            <span class="sidebar-label">Dashboard</span>
+          </div>
+        </a>
+
+        <a
+          href="{{ url_for('quizRouter.quizPage') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">📊</div>
+            <span class="sidebar-label">Quiz</span>
+          </div>
+        </a>
+
         <div class="sidebar-item" onclick="navigateTo('careers')">
           <div class="sidebar-icon">🔍</div>
           <span class="sidebar-label">Explore Courses...</span>
@@ -104,7 +116,10 @@
             Education Advisor.
           </p>
 
-          <button class="start-button" onclick="navigateTo('assessment')">
+          <button
+            class="start-button"
+            onclick="window.location.href='{{ url_for('quizRouter.quizPage') }}'"
+          >
             Start Quiz →
           </button>
         </div>

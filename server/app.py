@@ -24,6 +24,7 @@ def create_app():
     #below is table creation
     gernalQuery("create_user_table")
     gernalQuery("create_chat_table")
+    gernalQuery("create_quiz_table")
 
     for bp in allControllers:
         app.register_blueprint(bp)

@@ -1,6 +1,7 @@
 from utils import loadQueries, handleError
 from psycopg2.extras import execute_values
 from .connection import getConnection, releaseConnection
+import json
 
 Queries = loadQueries("db/queries.sql")
 
@@ -75,3 +76,13 @@ def getChatData(userId: str):
 def insertChatData(data: list):
     return runQuery("insert_chat", params=data, batch=True, commit=True)
     
+@handleError("Fail to insert quiz data ", internal_error=1)
+def insertQuizData(userId: str, data: list):
+    profileData = json.dumps(data)
+    return runQuery("insert_quiz", params=(userId, profileData,), commit=True)
+
+@handleError("Fail to fetch quiz data", internal_error=1)
+def getQuizData(userId: str):
+    return runQuery("select_quiz", params=(userId,), fetchall=True)
+
+ 

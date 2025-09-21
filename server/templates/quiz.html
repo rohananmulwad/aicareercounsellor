@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Career Aptitude Quiz</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 700px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4f46e5, #7c3aed);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2em;
+        margin-bottom: 0px;
+        font-weight: 700;
+      }
+
+      .header p {
+        opacity: 0.9;
+        font-size: 1.1em;
+      }
+
+      .quiz-container {
+        padding: 30px;
+      }
+
+      .progress-section {
+        margin-bottom: 30px;
+      }
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: #64748b;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 6px;
+        background: #e2e8f0;
+        border-radius: 3px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4f46e5, #7c3aed);
+        border-radius: 3px;
+        transition: width 0.4s ease;
+      }
+
+      .question-section {
+        margin-bottom: 30px;
+      }
+
+      .question-title {
+        font-size: 1.3em;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 25px;
+        line-height: 1.4;
+      }
+
+      /* Multiple Choice Options */
+      .option {
+        width: 100%;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        border: 2px solid #e5e7eb;
+        border-radius: 10px;
+        background: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-align: left;
+        font-size: 15px;
+        color: #374151;
+        position: relative;
+      }
+
+      .option:hover {
+        border-color: #c7d2fe;
+        background: #f8faff;
+        transform: translateY(-1px);
+      }
+
+      .option.selected {
+        border-color: #4f46e5;
+        background: #eef2ff;
+        color: #4f46e5;
+        font-weight: 500;
+      }
+
+      .option::before {
+        content: "";
+        position: absolute;
+        left: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 16px;
+        height: 16px;
+        border: 2px solid #d1d5db;
+        border-radius: 50%;
+        margin-right: 12px;
+        transition: all 0.2s ease;
+      }
+
+      .option.selected::before {
+        border-color: #4f46e5;
+        background: #4f46e5;
+        background-image: radial-gradient(circle, white 30%, #4f46e5 30%);
+      }
+
+      .option-text {
+        margin-left: 28px;
+      }
+
+      /* Rating Scale */
+      .rating-container {
+        margin: 20px 0;
+      }
+
+      .rating-scale {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin: 20px 0;
+      }
+
+      .rating-option {
+        flex: 1;
+        padding: 15px 8px;
+        text-align: center;
+        border: 2px solid #e5e7eb;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 13px;
+        min-height: 70px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .rating-option:hover {
+        border-color: #4f46e5;
+        background: #f8faff;
+      }
+
+      .rating-option.selected {
+        background: #4f46e5;
+        color: white;
+        border-color: #4f46e5;
+        font-weight: 500;
+      }
+
+      .rating-number {
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      .rating-label {
+        font-size: 11px;
+        line-height: 1.2;
+      }
+
+      .navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+      }
+
+      .nav-button {
+        padding: 12px 24px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.2s ease;
+        font-size: 15px;
+        min-width: 100px;
+      }
+
+      .btn-primary {
+        background: #4f46e5;
+        color: white;
+      }
+
+      .btn-primary:hover:not(:disabled) {
+        background: #4338ca;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+      }
+
+      .btn-secondary:hover:not(:disabled) {
+        background: #e5e7eb;
+      }
+
+      .btn-primary:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .btn-secondary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .results-container {
+        text-align: center;
+        padding: 40px 30px;
+      }
+
+      .results-title {
+        font-size: 2em;
+        color: #1f2937;
+        margin-bottom: 20px;
+      }
+
+      .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e5e7eb;
+        border-radius: 50%;
+        border-top-color: #4f46e5;
+        animation: spin 1s ease-in-out infinite;
+        margin: 0 auto 20px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .category-badge {
+        display: inline-block;
+        background: rgba(79, 70, 229, 0.1);
+        color: #4f46e5;
+        padding: 4px 12px;
+        border-radius: 12px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .error-message {
+        background: #fee2e2;
+        border: 1px solid #fecaca;
+        color: #dc2626;
+        padding: 15px;
+        border-radius: 8px;
+        margin: 20px 0;
+        text-align: center;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .container {
+          margin: 10px;
+          border-radius: 15px;
+        }
+
+        .quiz-container {
+          padding: 20px;
+        }
+
+        .header {
+          padding: 25px 20px;
+        }
+
+        .header h1 {
+          font-size: 1.8em;
+        }
+
+        .rating-scale {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .rating-option {
+          min-height: 50px;
+          padding: 12px;
+        }
+
+        .navigation {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .nav-button {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .rating-scale {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-icon ai">AI</div>
+        <h3 class="sidebar-title">CareerAI</h3>
+      </div>
+
+      <nav class="sidebar-nav"> 
+         <a
+          href="{{ url_for('userRouter.dashboard') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">🏠</div>
+            <span class="sidebar-label">Dashboard</span>
+          </div>
+        </a>
+
+         <a
+          href="{{ url_for('quizRouter.quizPage') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">📊</div>
+            <span class="sidebar-label">Quiz</span>
+          </div>
+        </a>
+
+        <div class="sidebar-item" onclick="navigateTo('careers')">
+          <div class="sidebar-icon">🔍</div>
+          <span class="sidebar-label">Explore Courses...</span>
+        </div>
+        <a
+          href="{{ url_for('aiRouter.chatStream') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item" onclick="navigateTo('skills')">
+            <div class="sidebar-icon">🎯</div>
+            <span class="sidebar-label">Skill Advisor</span>
+          </div>
+        </a>
+        <a
+          href="{{ url_for('roadmap.genRoadMap') }}"
+          style="text-decoration: none; color: inherit; display: block"
+        >
+          <div class="sidebar-item">
+            <div class="sidebar-icon">🗺️</div>
+            <span class="sidebar-label">Career Roadmap</span>
+          </div>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-item" onclick="navigateTo('settings')">
+          <div class="sidebar-icon">⚙️</div>
+          <span class="sidebar-label">Settings</span>
+        </div>
+        <div class="sidebar-item" onclick="navigateTo('help')">
+          <div class="sidebar-icon">❓</div>
+          <span class="sidebar-label">Help & Support</span>
+        </div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="header">
+        <h1 id="quiz-title">Career Aptitude Assessment</h1>
+        <p id="quiz-description">Discover your ideal career path</p>
+      </div>
+
+      <div id="quiz-section" class="quiz-container hidden">
+        <div class="progress-section">
+          <div class="progress-info">
+            <span id="question-counter">Question 1 of 15</span>
+            <span id="category-badge" class="category-badge"
+              >Getting Started</span
+            >
+          </div>
+          <div class="progress-bar">
+            <div
+              id="progress-fill"
+              class="progress-fill"
+              style="width: 0%"
+            ></div>
+          </div>
+        </div>
+
+        <div class="question-section">
+          <h2 id="question-title" class="question-title"></h2>
+          <div id="options-container"></div>
+        </div>
+
+        <div class="navigation">
+          <button
+            id="prev-btn"
+            class="nav-button btn-secondary"
+            onclick="previousQuestion()"
+            disabled
+          >
+            ← Previous
+          </button>
+          <button
+            id="next-btn"
+            class="nav-button btn-primary"
+            onclick="nextQuestion()"
+            disabled
+          >
+            Next →
+          </button>
+        </div>
+      </div>
+
+      <div id="loading-section" class="results-container">
+        <div class="loading-spinner"></div>
+        <h2>Generating Your Quiz...</h2>
+        <p>Please wait a moment while we create your personalized quiz.</p>
+      </div>
+
+      <div id="error-section" class="results-container hidden">
+        <h2>Unable to Load Quiz</h2>
+        <div class="error-message">
+          <p id="error-message">
+            There was an error loading the quiz. Please try again.
+          </p>
+        </div>
+        <button class="nav-button btn-primary" onclick="location.reload()">
+          🔄 Retry
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // Quiz data and state
+      let quizData = null;
+      let currentQuestionIndex = 0;
+      let answers = {};
+
+      // ** IMPORTANT: The data from Flask is embedded here! **
+      // Flask renders the template and injects the quizLLMData variable.
+      // We'll process this data here.
+      const llmDataFromFlask = `{{ quizLLMData | tojson | safe }}`;
+
+      // Initialize quiz on page load
+      document.addEventListener("DOMContentLoaded", function () {
+        loadQuizData();
+      });
+
+      function loadQuizData() {
+        document.getElementById("quiz-section").classList.add("hidden");
+        document.getElementById("loading-section").classList.remove("hidden");
+
+        // Handle the data passed directly from Flask
+        try {
+          // Ensure the string is a valid JSON. The |tojson filter handles some escaping.
+          // We'll parse the string into a JSON object.
+          const rawData = JSON.parse(llmDataFromFlask.replace(/&quot;/g, '"'));
+          quizData = rawData;
+
+          // Once data is loaded, initialize the quiz
+          initializeQuiz();
+        } catch (error) {
+          console.error("Error processing LLM data:", error);
+          showError(
+            "There was a problem processing the quiz data from the server. Please try again."
+          );
+        }
+      }
+
+      function initializeQuiz() {
+        if (
+          !quizData ||
+          !quizData.questions ||
+          quizData.questions.length === 0
+        ) {
+          showError("Invalid quiz data received from the server.");
+          return;
+        }
+
+        // Hide loading screen and show quiz
+        document.getElementById("loading-section").classList.add("hidden");
+        document.getElementById("quiz-section").classList.remove("hidden");
+
+        // Update header with quiz info
+        document.getElementById("quiz-title").textContent =
+          quizData.title || "Career Aptitude Assessment";
+        document.getElementById("quiz-description").textContent =
+          quizData.description || "Discover your ideal career path";
+
+        // Display first question
+        displayQuestion();
+      }
+
+      function displayQuestion() {
+        const question = quizData.questions[currentQuestionIndex];
+        const totalQuestions = quizData.questions.length;
+
+        // Update progress
+        document.getElementById("question-counter").textContent = `Question ${
+          currentQuestionIndex + 1
+        } of ${totalQuestions}`;
+        document.getElementById("category-badge").textContent =
+          formatCategoryName(question.category);
+        document.getElementById("progress-fill").style.width = `${
+          ((currentQuestionIndex + 1) / totalQuestions) * 100
+        }%`;
+
+        // Update question text
+        document.getElementById("question-title").textContent =
+          question.question;
+
+        // Clear and populate options
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+
+        if (question.type === "multiple_choice") {
+          displayMultipleChoice(question, optionsContainer);
+        } else if (question.type === "rating_scale") {
+          displayRatingScale(question, optionsContainer);
+        }
+
+        // Update navigation buttons
+        document.getElementById("prev-btn").disabled =
+          currentQuestionIndex === 0;
+        updateNextButton();
+      }
+
+      function displayMultipleChoice(question, container) {
+        question.options.forEach((option) => {
+          const button = document.createElement("button");
+          button.className = "option";
+          button.innerHTML = `<div class="option-text">${option.text}</div>`;
+          button.onclick = () => selectOption(question.id, option.id, button);
+
+          if (answers[question.id] === option.id) {
+            button.classList.add("selected");
+          }
+
+          container.appendChild(button);
+        });
+      }
+
+      function displayRatingScale(question, container) {
+        const ratingContainer = document.createElement("div");
+        ratingContainer.className = "rating-container";
+
+        const ratingScale = document.createElement("div");
+        ratingScale.className = "rating-scale";
+
+        for (let i = question.scale.min; i <= question.scale.max; i++) {
+          const ratingButton = document.createElement("button");
+          ratingButton.className = "rating-option";
+          ratingButton.innerHTML = `
+                    <div class="rating-number">${i}</div>
+                    <div class="rating-label">${
+                      question.scale.labels[i - 1]
+                    }</div>
+                `;
+          ratingButton.onclick = () =>
+            selectRating(question.id, i, ratingButton);
+
+          if (answers[question.id] == i) {
+            ratingButton.classList.add("selected");
+          }
+
+          ratingScale.appendChild(ratingButton);
+        }
+
+        ratingContainer.appendChild(ratingScale);
+        container.appendChild(ratingContainer);
+      }
+
+      function selectOption(questionId, optionId, button) {
+        // Remove selected class from all options
+        document
+          .querySelectorAll(".option")
+          .forEach((opt) => opt.classList.remove("selected"));
+        // Add selected class to clicked option
+        button.classList.add("selected");
+        // Store answer
+        answers[questionId] = optionId;
+        updateNextButton();
+      }
+
+      function selectRating(questionId, rating, button) {
+        // Remove selected class from all ratings
+        document
+          .querySelectorAll(".rating-option")
+          .forEach((opt) => opt.classList.remove("selected"));
+        // Add selected class to clicked rating
+        button.classList.add("selected");
+        // Store answer
+        answers[questionId] = rating;
+        updateNextButton();
+      }
+
+      function updateNextButton() {
+        const currentQuestion = quizData.questions[currentQuestionIndex];
+        const hasAnswer = answers[currentQuestion.id] !== undefined;
+
+        const nextBtn = document.getElementById("next-btn");
+        nextBtn.disabled = !hasAnswer;
+
+        if (currentQuestionIndex === quizData.questions.length - 1) {
+          nextBtn.innerHTML = "Complete Quiz →";
+        } else {
+          nextBtn.innerHTML = "Next →";
+        }
+      }
+
+      function nextQuestion() {
+        if (currentQuestionIndex < quizData.questions.length - 1) {
+          currentQuestionIndex++;
+          displayQuestion();
+        } else {
+          completeQuiz();
+        }
+      }
+
+      function previousQuestion() {
+        if (currentQuestionIndex > 0) {
+          currentQuestionIndex--;
+          displayQuestion();
+        }
+      }
+
+      // ... (rest of your frontend code)
+
+      function completeQuiz() {
+        // Show loading
+        document.getElementById("quiz-section").classList.add("hidden");
+        document.getElementById("loading-section").classList.remove("hidden");
+        document.querySelector("#loading-section h2").textContent =
+          "Processing Your Results...";
+        document.querySelector("#loading-section p").textContent =
+          "Analyzing your responses to determine your career matches.";
+
+        const submissionData = {
+          user_answers: answers,
+          quiz_data: quizData,
+        };
+
+        fetch("/quiz/quizEval", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(submissionData),
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Failed to submit quiz.");
+            return response.json();
+          })
+          .then((data) => {
+            // Hide loading
+            document.getElementById("loading-section").classList.add("hidden");
+            // Render results
+            renderResults(data);
+          })
+          .catch((error) => {
+            console.error(error);
+            showError("Failed to process your quiz. Please try again.");
+          });
+      }
+
+      // ... (rest of your frontend code)
+
+      function renderResults(profile) {
+        const container = document.createElement("div");
+        container.className = "results-container";
+        container.style.padding = "30px";
+        container.style.background = "#f9fafb";
+        container.style.borderRadius = "20px";
+        container.style.boxShadow = "0 10px 25px rgba(0,0,0,0.1)";
+        container.style.marginTop = "20px";
+
+        const assessment = profile.user_profile?.assessment_summary || {};
+        const cognitive = profile.user_profile?.cognitive_profile || {};
+        const careers =
+          profile.user_profile?.career_alignment?.top_career_categories || [];
+        const aiPrefs =
+          profile.user_profile?.ai_interaction_context
+            ?.communication_preferences || {};
+
+        container.innerHTML = `
+    <h2 class="results-title" style="color:#4f46e5; margin-bottom:20px;">Your Career Profile</h2>
+    
+    <div style="margin-bottom:25px; padding:20px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+      <h3 style="color:#1f2937; margin-bottom:10px;">Assessment Summary</h3>
+      <p style="color:#4b5563;">Completed on <strong>${
+        assessment.completion_date || "-"
+      }</strong></p>
+      <p style="color:#4b5563;">Total Questions: <strong>${
+        assessment.total_questions || "-"
+      }</strong></p>
+      <p style="color:#4b5563;">Engagement Level: <span style="background:#e0e7ff; color:#4338ca; padding:4px 10px; border-radius:8px;">${
+        assessment.engagement_level || "-"
+      }</span></p>
+    </div>
+    
+    <div style="margin-bottom:25px; padding:20px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+      <h3 style="color:#1f2937; margin-bottom:10px;">Cognitive Profile</h3>
+      <ul style="list-style:none; padding-left:0; color:#374151; line-height:1.6;">
+        <li><strong>Analytical Thinking:</strong> ${
+          cognitive.analytical_thinking?.score || "-"
+        } / 10 (${
+          cognitive.analytical_thinking?.percentile || "-"
+        } percentile)</li>
+        <li><strong>Creativity:</strong> ${
+          cognitive.creativity_index?.score || "-"
+        } / 10 (${
+          cognitive.creativity_index?.percentile || "-"
+        } percentile)</li>
+        <li><strong>Problem Solving Style:</strong> ${
+          cognitive.problem_solving_style || "-"
+        }</li>
+        <li><strong>Learning Preference:</strong> ${
+          cognitive.learning_preference || "-"
+        }</li>
+      </ul>
+    </div>
+    
+    <div style="margin-bottom:25px; padding:20px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+      <h3 style="color:#1f2937; margin-bottom:10px;">Top Career Matches</h3>
+      <ul style="list-style:none; padding-left:0; color:#374151; line-height:1.6;">
+        ${careers
+          .map(
+            (c) => `
+          <li style="margin-bottom:10px; padding:10px; border-left:4px solid #4f46e5; background:#f0f0ff; border-radius:6px;">
+            <strong>${c.category}</strong> - Match Score: ${
+              c.match_score || "-"
+            }%<br>
+            <em style="color:#6b7280;">${c.reasoning || "-"}</em>
+          </li>`
+          )
+          .join("")}
+      </ul>
+    </div>
+    
+    <div style="margin-bottom:25px; padding:20px; background:white; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.05);">
+      <h3 style="color:#1f2937; margin-bottom:10px;">AI Interaction Context</h3>
+      <p style="color:#374151;"><strong>Preferred Detail Level:</strong> ${
+        aiPrefs.detail_level || "-"
+      }</p>
+      <p style="color:#374151;"><strong>Feedback Preference:</strong> ${
+        aiPrefs.feedback_preference || "-"
+      }</p>
+    </div>
+  `;
+
+        // Remove any previous results and append
+        const oldResults = document.querySelector(".results-container");
+        if (oldResults) oldResults.remove();
+
+        document.querySelector(".container").appendChild(container);
+      }
+
+      function formatCategoryName(category) {
+        return category
+          .replace(/_/g, " ")
+          .replace(/\b\w/g, (l) => l.toUpperCase());
+      }
+
+      function showError(message) {
+        document.getElementById("quiz-section").classList.add("hidden");
+        document.getElementById("loading-section").classList.add("hidden");
+        document.getElementById("error-message").textContent = message;
+        document.getElementById("error-section").classList.remove("hidden");
+      }
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
