@@ -5,6 +5,12 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 load_dotenv()
+#make this whole code multi-thread as this code is too slow
+#as one api take nearly 1-1.5 sec of llm
+#at conurrently single user can interact with llm
+#eg. if 10 user came at same time , the api will throw error 
+# of google llm
+#try to solve it or make it batch,multi-thread
 
 #This class is desing to handle all the fucntion realted 
 #google gemini,such as sending data to llm of google 
