@@ -8,7 +8,7 @@ aiRouter = Blueprint("aiRouter", __name__, url_prefix="/aiModel")
 
 llmService = Googlellm()  # ai model class
 
-#redis/cache layer can be used where their are db calls and other llm stuff such as vecotr gen 
+#redis/cache layer can be used where their are db calls and other llm stuff such as vector gen 
 
 @aiRouter.route("/chat", methods=["GET", "POST"])
 @handleError("error during chat")

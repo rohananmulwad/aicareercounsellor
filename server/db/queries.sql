@@ -72,7 +72,7 @@ SELECT chatId, messageData, chatRole, createdAt
 FROM chats
 WHERE userId = %s
 ORDER BY messageVector <-> %s::vector
-LIMIT 40;
+LIMIT 5;
 
 -- create_vector_index
 CREATE INDEX IF NOT EXISTS chats_embedding_cosine_idx ON chats 
