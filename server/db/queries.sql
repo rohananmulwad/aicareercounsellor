@@ -71,9 +71,12 @@ LIMIT 40;
 SELECT chatId, messageData, chatRole, createdAt
 FROM chats
 WHERE userId = %s
-ORDER BY messageVector <-> %s
+ORDER BY messageVector <-> %s::vector
 LIMIT 40;
 
+-- create_vector_index
+CREATE INDEX IF NOT EXISTS chats_embedding_cosine_idx ON chats 
+USING ivfflat(messageVector vector_cosine_ops) WITH (lists=100);
 -- select_Assement
 SELECT assId,assData,createdAt
 FROM assigment

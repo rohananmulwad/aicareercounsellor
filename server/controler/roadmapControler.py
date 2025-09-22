@@ -9,7 +9,7 @@ from datetime import datetime
 
 roadmapRoute = Blueprint("roadmap", __name__, url_prefix="/roadmap")
 llmService = Googlellm()
-
+#redis/cache layer can be used where their are db calls and other llm stuff such as vecotr gen 
 
 # this function only conver datatime to string or json formate
 def json_serializer(obj):

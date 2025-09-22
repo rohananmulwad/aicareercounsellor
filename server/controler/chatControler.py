@@ -1,6 +1,6 @@
 from flask import Blueprint, request, render_template, Response
 from utils import handleError
-from db import getChatData, insertChatData
+from db import getChatDataByEmbedding, insertChatData
 from middleware.authMiddleware import loginRequired
 from aiModle import Googlellm
 
@@ -8,6 +8,7 @@ aiRouter = Blueprint("aiRouter", __name__, url_prefix="/aiModel")
 
 llmService = Googlellm()  # ai model class
 
+#redis/cache layer can be used where their are db calls and other llm stuff such as vecotr gen 
 
 @aiRouter.route("/chat", methods=["GET", "POST"])
 @handleError("error during chat")
@@ -30,9 +31,11 @@ def chatStream(user):
 
         userId = user["userId"]
 
-        # chat history fetch
+        #getting message vector
         messageVector = llmService.getEmbedding(message)
-        chatHistory = getChatData(userId)
+        messageVectorStr = "[" + ",".join(str(x) for x in messageVector) + "]"
+        # chat history fetch using vector
+        chatHistory = getChatDataByEmbedding(userId, messageVector=messageVectorStr)
         if chatHistory is None:
             chatHistory = []
         contextText = ""

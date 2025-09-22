@@ -71,6 +71,10 @@ def getUserEmail(email: str):
 def getChatData(userId: str):
     return runQuery("select_chats", params=(userId,), fetchall=True)
 
+@handleError("Fail to fecth chat data vector", internal_error=1)
+def getChatDataByEmbedding(userId: str, messageVector: str):
+    return runQuery("select_chat_vector", params=(userId, messageVector), fetchall=True)
+
 
 @handleError("Fail to insert chat data", internal_error=1)
 def insertChatData(data: list):

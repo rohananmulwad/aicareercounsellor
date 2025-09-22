@@ -10,6 +10,7 @@ import re
 quizRouter = Blueprint("quizRouter", __name__, url_prefix="/quiz")
 quizLLM = Googlellm()
 
+#redis/cache layer can be used where their are db calls and other llm stuff such as vecotr gen 
 
 def json_serializer(obj):
     if isinstance(obj, datetime):

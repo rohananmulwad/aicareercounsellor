@@ -18,6 +18,7 @@ def create_app():
     # below is extension activation
     gernalQuery("uuid_extension")
     gernalQuery("vector_extension")
+    gernalQuery("create_vector_index")
     # creating Types
     gernalQuery("create_type_role")
     # below is table creation
